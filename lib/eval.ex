@@ -65,14 +65,17 @@ defmodule Tryelixir.Eval do
     code = code_so_far ++ latest_input
     case :elixir_translator.forms(code, line_no, "iex", []) do
       { :ok, forms } ->
-        # TODO: need to parse forms to check is code is allowed
-        { result, new_binding, scope } =
-          :elixir.eval_forms(forms, config.binding, config.scope)
+        if is_safe?(forms) do
+          { result, new_binding, scope } =
+            :elixir.eval_forms(forms, config.binding, config.scope)
 
-        io_put result
+          io_put result
 
-        config = config.cache(code).scope(nil).result(result)
-        config.update_counter(&1+1).cache('').binding(new_binding).scope(scope).result(nil)
+          config = config.cache(code).scope(nil).result(result)
+          config.update_counter(&1+1).cache('').binding(new_binding).scope(scope).result(nil)
+        else
+          raise "restricted"
+        end
 
       { :error, { line_no, error, token } } ->
         if token == [] do
@@ -84,6 +87,27 @@ defmodule Tryelixir.Eval do
           :elixir_errors.parse_error(line_no, "iex", error, token)
         end
     end
+  end
+
+  # Check if the AST contains non allowed code, returns false if it does,
+  # true otherwise.
+
+  @allowed [List, Enum, String]
+  defp is_safe?({{:., _, [module, _]}, _, args}) do
+    module = Macro.expand(module, __ENV__)
+    if module in @allowed do
+      is_safe?(args)
+    else
+      false
+    end
+  end
+
+  defp is_safe?(lst) when is_list(lst) do
+    Enum.all?(lst, fn(x) -> is_safe?(x) end)
+  end
+
+  defp is_safe?(_) do
+    true
   end
 
   defp io_get(config) do
