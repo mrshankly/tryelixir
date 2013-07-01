@@ -113,6 +113,11 @@ defmodule Tryelixir.Eval do
     (module in @allowed) and is_safe?(args)
   end
 
+  # check calls to anonymous functions, eg. f.()
+  defp is_safe?({{:., _, f_args}, _, args}) do
+    is_safe?(f_args) and is_safe?(args)
+  end
+
   # used with :fn
   defp is_safe?([do: args]) do
     is_safe?(args)
