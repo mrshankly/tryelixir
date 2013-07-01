@@ -90,9 +90,10 @@ defmodule Tryelixir.Eval do
 
   # Check if the AST contains non allowed code, returns false if it does,
   # true otherwise.
-  @allowed [List, Enum, String]
+  @allowed      [List, Enum, String]
   @allowed_funs [:fn, :'->', :&, :=, :==, :===, :>=, :<=, :!=, :!==, :>,
                  :<, :and, :or, :||, :&&, :!, :*, :+, :-, :/, :++, :--, :<>]
+  @iex_helpers  [:ls, :flush, :m, :pwd, :r, :v]
 
   # allow Kernel.access
   defp is_safe?({{:., _, [:'Elixir.Kernel', :access]}, _, _}) do
@@ -102,11 +103,7 @@ defmodule Tryelixir.Eval do
   # check modules
   defp is_safe?({{:., _, [module, _]}, _, args}) do
     module = Macro.expand(module, __ENV__)
-    if module in @allowed do
-      is_safe?(args)
-    else
-      false
-    end
+    (module in @allowed) and is_safe?(args)
   end
 
   # used with :fn
@@ -120,11 +117,12 @@ defmodule Tryelixir.Eval do
   end
 
   # check local functions
-  defp is_safe?({dot, _, args}) when args != nil do
-    if dot in @allowed_funs do
-      is_safe?(args)
-    else
-      false
+  defp is_safe?({dot, _, args}) do
+    case args do
+      nil ->
+        ! dot in @iex_helpers
+      _ ->
+        (dot in @allowed_funs) and is_safe?(args)
     end
   end
 
