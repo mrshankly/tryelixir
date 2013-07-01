@@ -38,7 +38,7 @@ defmodule TryelixirTest do
       f = fn -> System.cmd("pwd") end
       f.()
     """
-    assert capture_output(input) == @restricted
+    assert [@restricted, _] = String.split(capture_output(input), "\n", global: false)
   end
 
   test "restricted local function (no args)" do
