@@ -50,7 +50,6 @@ defmodule Tryelixir.Eval do
   # to re-raise it.
   #
   # Returns updated config.
-
   @break_trigger '#iex:break\n'
   defp eval(_, @break_trigger, _, config=IEx.Config[cache: '']) do
     # do nothing
@@ -91,7 +90,6 @@ defmodule Tryelixir.Eval do
 
   # Check if the AST contains non allowed code, returns false if it does,
   # true otherwise.
-
   @allowed [List, Enum, String]
   defp is_safe?({{:., _, [module, _]}, _, args}) do
     module = Macro.expand(module, __ENV__)
@@ -123,7 +121,7 @@ defmodule Tryelixir.Eval do
   end
 
   defp io_put(result) do
-    IO.puts IEx.color(:eval_result, inspect(result, IEx.Options.get(:inspect)))
+    IO.puts "#{inspect result}"
   end
 
   defp print_exception(exception) do
