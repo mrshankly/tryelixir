@@ -22,7 +22,23 @@ defmodule TryelixirTest do
   end
 
   test "restricted fn" do
-    assert capture_output("fn -> System.cmd(pwd) end") == @restricted
+    assert capture_output("fn -> System.cmd(\"pwd\") end") == @restricted
+  end
+
+  test "allowed fn call" do
+    input = """
+      square = fn(x) -> x * x end
+      square.(5)
+    """
+    assert [_, "25"] = String.split(capture_output(input), "\n", global: false)
+  end
+
+  test "restricted fn call" do
+    input = """
+      f = fn -> System.cmd("pwd") end
+      f.()
+    """
+    assert capture_output(input) == @restricted
   end
 
   test "restricted local function (no args)" do
