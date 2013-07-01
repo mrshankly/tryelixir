@@ -13,8 +13,13 @@ defmodule Tryelixir.Eval do
   """
   def start() do
     # TODO: handle history
+
+    config = IEx.boot_config []
+    { _, _, scope } = :elixir.eval('require IEx.Helpers', [], 0, config.scope)
+    config = config.scope(scope)
+
     IO.puts "Interactive Elixir (#{System.version}) - (type h() ENTER for help)"
-    eval_loop(IEx.boot_config [])
+    eval_loop(config)
   end
 
   defp eval_loop(config) do
@@ -90,10 +95,12 @@ defmodule Tryelixir.Eval do
 
   # Check if the AST contains non allowed code, returns false if it does,
   # true otherwise.
-  @allowed      [List, Enum, String]
-  @allowed_funs [:fn, :'->', :&, :=, :==, :===, :>=, :<=, :!=, :!==, :>,
-                 :<, :and, :or, :||, :&&, :!, :*, :+, :-, :/, :++, :--, :<>]
-  @iex_helpers  [:ls, :flush, :m, :pwd, :r, :v]
+  @allowed        [List, Enum, String]
+  @allowed_funs   [:fn, :'->', :&, :=, :==, :===, :>=, :<=, :!=, :!==, :>,
+                   :<, :and, :or, :||, :&&, :!, :*, :+, :-, :/, :++, :--, :<>
+                  ]
+  @iex_helpers_r  [:c, :ls, :cd, :flush, :l, :m, :pwd, :r, :import_file]
+  @iex_helpers_a  [:h, :s, :t, :v]
 
   # allow Kernel.access
   defp is_safe?({{:., _, [:'Elixir.Kernel', :access]}, _, _}) do
@@ -117,13 +124,13 @@ defmodule Tryelixir.Eval do
   end
 
   # check local functions
+  defp is_safe?({dot, _, nil}) do
+    (! dot in @iex_helpers_r)
+  end
+
   defp is_safe?({dot, _, args}) do
-    case args do
-      nil ->
-        ! dot in @iex_helpers
-      _ ->
-        (dot in @allowed_funs) and is_safe?(args)
-    end
+    (dot in @iex_helpers_a) or
+    ((dot in @allowed_funs) and is_safe?(args))
   end
 
   defp is_safe?(lst) when is_list(lst) do
