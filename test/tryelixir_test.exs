@@ -30,7 +30,7 @@ defmodule TryelixirTest do
   end
 
   test "restricted local function" do
-    assert capture_output("ls(\"1\")") == @restricted
+    assert capture_output("ls(\".\")") == @restricted
   end
 
   test "restricted local function with fn" do
