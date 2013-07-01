@@ -78,7 +78,7 @@ defmodule Tryelixir.Eval do
 
       { :error, { line_no, error, token } } ->
         if token == [] do
-          # Update config.cache so that IEx continues to add new input to
+          # Update config.cache in order to keep adding new input to
           # the unfinished expression in `code`
           config.cache(code)
         else
@@ -91,9 +91,37 @@ defmodule Tryelixir.Eval do
   # Check if the AST contains non allowed code, returns false if it does,
   # true otherwise.
   @allowed [List, Enum, String]
+  @allowed_funs [:fn, :'->', :&, :=, :==, :===, :>=, :<=, :!=, :!==, :>,
+                 :<, :and, :or, :||, :&&, :!, :*, :+, :-, :/, :++, :--, :<>]
+
+  # allow Kernel.access
+  defp is_safe?({{:., _, [:'Elixir.Kernel', :access]}, _, _}) do
+    true
+  end
+
+  # check modules
   defp is_safe?({{:., _, [module, _]}, _, args}) do
     module = Macro.expand(module, __ENV__)
     if module in @allowed do
+      is_safe?(args)
+    else
+      false
+    end
+  end
+
+  # used with :fn
+  defp is_safe?([do: args]) do
+    is_safe?(args)
+  end
+
+  # used with :'->'
+  defp is_safe?({left, _, right}) when is_list(left) do
+    is_safe?(left) and is_safe?(right)
+  end
+
+  # check local functions
+  defp is_safe?({dot, _, args}) when args != nil do
+    if dot in @allowed_funs do
       is_safe?(args)
     else
       false
