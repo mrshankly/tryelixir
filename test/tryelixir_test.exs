@@ -25,7 +25,15 @@ defmodule TryelixirTest do
     assert capture_output("fn -> System.cmd(pwd) end") == @restricted
   end
 
+  test "restricted local function (no args)" do
+    assert capture_output("ls") == @restricted
+  end
+
   test "restricted local function" do
+    assert capture_output("ls(\"1\")") == @restricted
+  end
+
+  test "restricted local function with fn" do
     assert capture_output("spawn(fn -> 1 + 1 end)") == @restricted
   end
 end
