@@ -2,6 +2,38 @@ defmodule Tryelixir.Eval do
   @moduledoc """
   Eval module for tryelixir, most of the code is the same as IEx.Server
   """
+  @allowed_non_local HashDict.new [
+    {Bitwise,  :all},
+    {Dict,     :all},
+    {Enum,     :all},
+    {HashDict, :all},
+    {Keyword,  :all},
+    {List,     :all},
+    {ListDict, :all},
+    {Regex,    :all},
+    {String,   :all},
+    {Kernel,   [:access]}
+  ]
+
+  @iex_helpers_r [:c, :ls, :cd, :flush, :l, :m, :pwd, :r, :import_file]
+  @iex_helpers_a [:h, :s, :t, :v]
+  @allowed_local [:&&, :.., :<>, :@, :access, :and, :atom_to_binary, :binary_to_atom,
+    :binary_to_existing_atom, :case, :cond, :div, :elem, :if, :in, :insert_elem,
+    :is_exception, :is_range, :is_record, :is_record, :is_regex, :match?, :nil?,
+    :or, :rem, :set_elem, :sigil_B, :sigil_C, :sigil_R, :sigil_W, :sigil_b,
+    :sigil_c, :sigil_r, :sigil_w, :to_binary, :to_char_list, :try, :unless, :use,
+    :xor, :|>, :||, :!, :!=, :!==, :*, :+, :+, :++, :-, :--, :/, :<, :<=, :=, :==,
+    :===, :=~, :>, :>=, :abs, :atom_to_binary, :atom_to_list, :binary_part,
+    :binary_to_atom, :binary_to_existing_atom, :binary_to_float, :binary_to_integer,
+    :binary_to_integer, :binary_to_list, :binary_to_list, :binary_to_term, :bit_size,
+    :bitstring_to_list, :byte_size, :float, :float_to_binary, :float_to_list, :hd,
+    :inspect, :integer_to_binary, :integer_to_list, :iolist_size, :iolist_to_binary,
+    :is_atom, :is_binary, :is_bitstring, :is_boolean, :is_float, :is_function,
+    :is_integer, :is_list, :is_number, :is_pid, :is_port, :is_reference, :is_tuple,
+    :length, :list_to_atom, :list_to_binary, :list_to_bitstring, :list_to_existing_atom,
+    :list_to_float, :list_to_integer, :list_to_tuple, :max, :min, :not,
+    :raise, :raise, :raise, :round, :size, :term_to_binary, :throw, :tl,
+    :trunc, :tuple_size, :tuple_to_list, :fn, :->, :&]
 
   @doc """
   Eval loop for a tryelixir session. It does the following:
@@ -95,22 +127,18 @@ defmodule Tryelixir.Eval do
 
   # Check if the AST contains non allowed code, returns false if it does,
   # true otherwise.
-  @allowed        [List, Enum, String]
-  @allowed_funs   [:fn, :'->', :&, :=, :==, :===, :>=, :<=, :!=, :!==, :>,
-                   :<, :and, :or, :||, :&&, :!, :*, :+, :-, :/, :++, :--, :<>
-                  ]
-  @iex_helpers_r  [:c, :ls, :cd, :flush, :l, :m, :pwd, :r, :import_file]
-  @iex_helpers_a  [:h, :s, :t, :v]
-
-  # allow Kernel.access
-  defp is_safe?({{:., _, [:'Elixir.Kernel', :access]}, _, _}) do
-    true
-  end
 
   # check modules
-  defp is_safe?({{:., _, [module, _]}, _, args}) do
+  defp is_safe?({{:., _, [module, fun]}, _, args}) do
     module = Macro.expand(module, __ENV__)
-    (module in @allowed) and is_safe?(args)
+    case HashDict.get(@allowed_non_local, module) do
+      :all ->
+        is_safe?(args)
+      lst when is_list(lst) ->
+        (fun in lst) and is_safe?(args)
+      nil ->
+        false
+    end
   end
 
   # check calls to anonymous functions, eg. f.()
@@ -135,7 +163,7 @@ defmodule Tryelixir.Eval do
 
   defp is_safe?({dot, _, args}) do
     (dot in @iex_helpers_a) or
-    ((dot in @allowed_funs) and is_safe?(args))
+    ((dot in @allowed_local) and is_safe?(args))
   end
 
   defp is_safe?(lst) when is_list(lst) do
