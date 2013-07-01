@@ -52,4 +52,12 @@ defmodule TryelixirTest do
   test "restricted local function with fn" do
     assert capture_output("spawn(fn -> 1 + 1 end)") == @restricted
   end
+
+  test "Kernel access" do
+    input = """
+      foo = [a: 1, b: 2, c: 3]
+      foo[:b]
+    """
+    assert capture_output(input) == "[a: 1, b: 2, c: 3]\n2"
+  end
 end
