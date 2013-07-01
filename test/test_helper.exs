@@ -21,11 +21,12 @@ defmodule Tryelixir.Case do
 
   defp strip_output(string) do
     string
-    |> strip_line # strip the greeting
+    |> strip_line # strip the greeting and colors
     |> String.strip
   end
 
   defp strip_line(string) do
-    Regex.replace %r/\A.+?$/ms, string, ""
+    string = Regex.replace %r/\A.+?$/ms, string, ""
+    Regex.replace %r/\e\[.?.?m/, string, ""
   end
 end
