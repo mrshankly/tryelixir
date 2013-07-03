@@ -10,9 +10,9 @@ body {
 }
 
 a {
-	color: #4e2a5e;
-	text-decoration: none;
-	outline: none;
+  color: #4e2a5e;
+  text-decoration: none;
+  outline: none;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -58,11 +58,11 @@ noscript > p {
 .pull-right {float: right;}
 
 .container-narrow {
-	margin: 0 auto;
-	max-width: 700px;
+  margin: 0 auto;
+  max-width: 700px;
 }
 .container-narrow > hr {
-	margin: 24px 0;
+  margin: 24px 0;
 }
 
 /* nav class from bootstrap */
