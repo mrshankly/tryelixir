@@ -1,0 +1,193 @@
+body {
+  margin: 0;
+  padding-top: 20px;
+  padding-bottom: 70px;
+  font-family: "DejaVu Sans", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: #333333;
+  background-color: #ffffff;
+}
+
+a {
+	color: #4e2a5e;
+	text-decoration: none;
+	outline: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding-top: 4px;
+  font-family: inherit;
+  font-weight: bold;
+  line-height: 20px;
+  color: inherit;
+  text-rendering: optimizelegibility;
+}
+h1, h2, h3 {line-height: 40px;}
+h1 {font-size: 38.5px;}
+h2 {font-size: 31.5px;}
+h3 {font-size: 24.5px;}
+h4 {font-size: 17.5px;}
+h5 {font-size: 14px;}
+h6 {font-size: 11.9px;}
+
+ul, ol {
+  margin: 0 0 10px 25px;
+  margin: 0;
+}
+li {line-height: 20px;}
+
+hr {
+  margin: 0;
+  margin: 20px 0;
+  border: 0;
+  border-top: 1px solid #dddddd;
+  border-bottom: 1px solid #ffffff;
+}
+
+noscript > p {
+  margin-bottom: 22px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.pull-left {float: left;}
+.pull-right {float: right;}
+
+.container-narrow {
+	margin: 0 auto;
+	max-width: 700px;
+}
+.container-narrow > hr {
+	margin: 24px 0;
+}
+
+/* nav class from bootstrap */
+.nav {
+  margin-left: 0;
+  margin-bottom: 20px;
+  list-style: none;
+}
+.nav > li > a {
+  display: block;
+}
+.nav > li > a:hover,
+.nav > li > a:focus {
+  text-decoration: none;
+  background-color: #eeeeee;
+}
+.nav > li > a > img {
+  max-width: none;
+}
+.nav > .pull-right {
+  float: right;
+}
+.nav-pills {
+  *zoom: 1;
+}
+.nav-pills:before,
+.nav-pills:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.nav-pills:after {
+  clear: both;
+}
+.nav-pills > li {
+  padding-top: 7px;
+  float: left;
+}
+.nav-pills > li > a {
+  padding-right: 12px;
+  padding-left: 12px;
+  margin-right: 2px;
+  line-height: 14px;
+}
+.nav-pills > li > a {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+.nav-pills > .active > a,
+.nav-pills > .active > a:hover,
+.nav-pills > .active > a:focus {
+  color: #ffffff;
+  background-color: #4e2a5e;
+}
+
+#tutorial {
+  background-color: #CBB3D2;
+  margin-top: 20px;
+  border: 1px solid #4e2a5e;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  color: #444;
+  word-wrap: break-word;
+}
+#tutorial p {
+  line-height: 1.8em;
+}
+#tutorial p, h1, h2, h3, h4, h5, h6 {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+#tutorial code {
+  font-family: monospace;
+  color: #fff;
+  background-color: #4e2a5e;
+  padding: 0.2em;
+  cursor: default;
+}
+
+#console {
+  height: 250px;
+  background-color: #fff8ed;
+  margin: 0;
+  border: 1px solid #f6e4cc;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+#console div.jquery-console-inner {
+ height: 230px;
+ margin: 10px 10px;
+ overflow: auto;
+ text-align: left;
+ font-family: monospace;
+}
+#console div.jquery-console-message-value {
+  color: #0066FF;
+  font-family: monospace;
+  padding: 0.1em;
+}
+#console div.jquery-console-prompt-box {
+ color: #555; font-family: monospace;
+}
+#console div.jquery-console-focus span.jquery-console-cursor {
+ background: #555; color: #eee; font-weight: bold;
+}
+#console div.jquery-console-message-error {
+ color: #ef0505; font-family: sans-serif; font-weight: bold;
+ padding: 0.1em;
+}
+#console div.jquery-console-message-success {
+ color: #008080; font-family: monospace;
+ padding: 0.1em;
+}
+#console div.jquery-console-welcome {
+  color: #555;
+  font-family: monospace;
+  font-weight: bold;
+}
+#console span.jquery-console-prompt-label {
+ font-weight: bold;
+}
