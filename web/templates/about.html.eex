@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Try Elixir</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="static/js/jquery-console/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery-console/jquery.console.js"></script>
+    <script type="text/javascript" src="static/js/tryelixir.js"></script>
+    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="shortcut icon" href="static/drop.png">
+  </head>
+
+  <body>
+    <div class="container-narrow">
+
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li class="active"><a href="/">Home</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="https://github.com/tryelixir/tryelixir.org" target="_blank">Source</a></li>
+        </ul>
+        <img class="pull-left" src="static/drop.png" width="48" height="48">
+        <h2>Try Elixir</h2>
+      </div>
+
+      <hr>
+        <p>TODO</p>
+      <hr>
+
+      <p class="text-center">Copyright © 2013 João Marques and Gonçalo Cabrita</p>
+    </div>
+  </body>
+</html>

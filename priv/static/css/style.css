@@ -165,7 +165,7 @@ noscript > p {
  font-family: monospace;
 }
 #console div.jquery-console-message-value {
-  color: #0066FF;
+  color: #555;
   font-family: monospace;
   padding: 0.1em;
 }
@@ -176,11 +176,13 @@ noscript > p {
  background: #555; color: #eee; font-weight: bold;
 }
 #console div.jquery-console-message-error {
- color: #ef0505; font-family: sans-serif; font-weight: bold;
+ color: #dd1144;
+ font-family: monospace;
  padding: 0.1em;
 }
 #console div.jquery-console-message-success {
- color: #008080; font-family: monospace;
+ color: #008080;
+ font-family: monospace;
  padding: 0.1em;
 }
 #console div.jquery-console-welcome {

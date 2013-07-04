@@ -1,7 +1,16 @@
+Dynamo.under_test(Tryelixir.Dynamo)
+Dynamo.Loader.enable
 ExUnit.start
 
-defmodule Tryelixir.Case do
+defmodule Tryelixir.TestCase do
   @moduledoc false
+  use ExUnit.CaseTemplate
+
+  # Enable code reloading on test cases
+  setup do
+    Dynamo.Loader.enable
+    :ok
+  end
 
   defmacro __using__(_) do
     quote do
@@ -16,7 +25,7 @@ defmodule Tryelixir.Case do
   """
   def capture_output(input) do
     ExUnit.CaptureIO.capture_io([input: input, capture_prompt: false],
-      fn -> Tryelixir.Eval.start() end) |> strip_output
+      fn -> Tryelixir.Eval.eval_loop() end) |> strip_output
   end
 
   defp strip_output(string) do

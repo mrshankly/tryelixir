@@ -4,11 +4,11 @@
     <meta charset="utf-8">
     <title>Try Elixir</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script type="text/javascript" src="js/jquery-console/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="js/jquery-console/jquery.console.js"></script>
-    <script type="text/javascript" src="js/tryelixir.js"></script>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="shortcut icon" href="assets/drop.png">
+    <script type="text/javascript" src="static/js/jquery-console/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery-console/jquery.console.js"></script>
+    <script type="text/javascript" src="static/js/tryelixir.js"></script>
+    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="shortcut icon" href="static/drop.png">
   </head>
 
   <body>
@@ -16,11 +16,11 @@
 
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
-          <li class="active"><a href="http://tryelixir.org">Home</a></li>
-          <li><a href="http://tryelixir.org/about">About</a></li>
+          <li class="active"><a href="/">Home</a></li>
+          <li><a href="/about">About</a></li>
           <li><a href="https://github.com/tryelixir/tryelixir.org" target="_blank">Source</a></li>
         </ul>
-        <img class="pull-left" src="assets/drop.png" width="48" height="48">
+        <img class="pull-left" src="static/drop.png" width="48" height="48">
         <h2>Try Elixir</h2>
       </div>
 

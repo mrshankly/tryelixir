@@ -8,7 +8,7 @@ var tutorialPages = [
 
 function changeTutorial(index) {
     $("#tutorial").fadeOut("fast", function() {
-        $("#tutorial").load("tutorial/" + tutorialPages[index]);
+        $("#tutorial").load("static/tutorial/" + tutorialPages[index]);
         $("#tutorial").fadeIn("fast");
     });
 }
@@ -27,24 +27,38 @@ function onHandle(line, report) {
         case ":next":
             if (tutorialActive && currentPage < tutorialPages.length - 1)
                 goToPage(currentPage + 1);
-            break;
+            report(":next");
+            return;
         case ":prev":
             if (tutorialActive && currentPage > 0)
                 goToPage(currentPage - 1);
-            break;
+            report(":prev");
+            return;
         case ":restart":
             if (tutorialActive)
                 goToPage(0);
-            break;
+            report(":restart");
+            return;
         case ":clear":
             shell();
-            return true;
+            report();
+            return;
         case ":start":
             tutorialActive = true;
             goToPage(0);
-            break;
+            report(":start");
+            return;
     }
-    return line;
+    $.ajax({
+        "type": "post",
+        "url": "api/eval",
+        "data": {"code": line},
+        "dataType": "text",
+        "success": function(result){
+            report([{msg:result, className:"jquery-console-message-success"}]);
+        }
+    });
+    return;
 }
 
 function shell() {
@@ -62,6 +76,6 @@ function shell() {
 }
 
 $(document).ready(function() {
-    $("#tutorial").load("intro.html");
+    $("#tutorial").load("static/intro.html");
     shell();
 });
