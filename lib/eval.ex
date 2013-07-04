@@ -99,7 +99,7 @@ defmodule Tryelixir.Eval do
     config
   end
 
-  defp eval(_, @break_trigger, _line_no, _) do
+  defp eval(_, @break_trigger, line_no, _) do
     :elixir_errors.parse_error(line_no, "iex", 'incomplete expression', [])
   end
 
@@ -107,7 +107,7 @@ defmodule Tryelixir.Eval do
     code = code_so_far <> latest_input
     case Code.string_to_quoted(code) do
       { :ok, form } ->
-        if true do
+        if is_safe? form do
           {result, new_binding} =
             Code.eval_quoted(form, config.binding, __ENV__)
 
@@ -116,7 +116,7 @@ defmodule Tryelixir.Eval do
           raise "restricted"
         end
 
-      { :error, { _line_no, _error, token } } ->
+      { :error, { line_no, error, token } } ->
         if token == [] do
           # Update config.cache in order to keep adding new input to
           # the unfinished expression in `code`
