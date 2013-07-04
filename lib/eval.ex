@@ -35,46 +35,52 @@ defmodule Tryelixir.Eval do
     :raise, :raise, :raise, :round, :size, :term_to_binary, :throw, :tl,
     :trunc, :tuple_size, :tuple_to_list, :fn, :->, :&]
 
+  defrecord Config, counter: 1, binding: [], cache: "", result: nil
+
   @doc """
-  Eval loop for a tryelixir session. It does the following:
+  Starts a new process of eval_loop. It does the following:
 
     * read input
     * check if the code being evaluated is allowed
     * trap exceptions in the code being evaluated
-    * keep expression history
   """
   def start() do
-    # TODO: handle history
-
-    config = IEx.boot_config []
-    { _, _, scope } = :elixir.eval('require IEx.Helpers', [], 0, config.scope)
-    config = config.scope(scope)
-
-    IO.puts "Interactive Elixir (#{System.version}) - (type h() ENTER for help)"
-    eval_loop(config)
+    spawn(fn -> eval_loop(Config.new) end)
   end
 
   defp eval_loop(config) do
-    counter = config.counter
-    code    = config.cache
-    line    = io_get(config)
-
-    unless line == :eof do
-      new_config =
-        try do
-          eval(code, line, counter, config)
-        rescue
-          exception ->
-            print_exception(exception)
-            config.cache('')
-        catch
-          kind, error ->
-            print_error(kind, error)
-            config.cache('')
+    receive do
+      {:input, line} ->
+        unless line == :eof do
+          new_config =
+            try do
+              counter = config.counter
+              code    = config.cache
+              eval(code, line, counter, config)
+            rescue
+              exception ->
+                print_exception(exception)
+                config.cache("")
+            catch
+              kind, error ->
+                print_error(kind, error)
+                config.cache("")
+            end
+          print_result(new_config)
+          eval_loop(new_config.result(nil))
         end
-
-      eval_loop(new_config)
+      :exit ->
+        :ok
     end
+  end
+
+  defp print_result(config) do
+    prefix = if config.cache != "", do: "..."
+    prompt = "#{prefix || "iex"}(#{config.counter})> "
+    if config.result != nil do
+      IO.puts "RESULT: #{inspect config.result}"
+    end
+    IO.puts "NEXT PROMPT: #{prompt}"
   end
 
   # The expression is parsed to see if it's well formed.
@@ -87,33 +93,30 @@ defmodule Tryelixir.Eval do
   # to re-raise it.
   #
   # Returns updated config.
-  @break_trigger '#iex:break\n'
-  defp eval(_, @break_trigger, _, config=IEx.Config[cache: '']) do
+  @break_trigger "#iex:break\n"
+  defp eval(_, @break_trigger, _, config=IEx.Config[cache: ""]) do
     # do nothing
     config
   end
 
-  defp eval(_, @break_trigger, line_no, _) do
+  defp eval(_, @break_trigger, _line_no, _) do
     :elixir_errors.parse_error(line_no, "iex", 'incomplete expression', [])
   end
 
   defp eval(code_so_far, latest_input, line_no, config) do
-    code = code_so_far ++ latest_input
-    case :elixir_translator.forms(code, line_no, "iex", []) do
-      { :ok, forms } ->
-        if is_safe?(forms) do
-          { result, new_binding, scope } =
-            :elixir.eval_forms(forms, config.binding, config.scope)
+    code = code_so_far <> latest_input
+    case Code.string_to_quoted(code) do
+      { :ok, form } ->
+        if true do
+          {result, new_binding} =
+            Code.eval_quoted(form, config.binding, __ENV__)
 
-          io_put result
-
-          config = config.cache(code).scope(nil).result(result)
-          config.update_counter(&1+1).cache('').binding(new_binding).scope(scope).result(nil)
+          config.counter(line_no + 1).cache("").binding(new_binding).result(result)
         else
           raise "restricted"
         end
 
-      { :error, { line_no, error, token } } ->
+      { :error, { _line_no, _error, token } } ->
         if token == [] do
           # Update config.cache in order to keep adding new input to
           # the unfinished expression in `code`
@@ -127,7 +130,7 @@ defmodule Tryelixir.Eval do
 
   # Check if the AST contains non allowed code, returns false if it does,
   # true otherwise.
-
+  #
   # check modules
   defp is_safe?({{:., _, [module, fun]}, _, args}) do
     module = Macro.expand(module, __ENV__)
@@ -136,7 +139,7 @@ defmodule Tryelixir.Eval do
         is_safe?(args)
       lst when is_list(lst) ->
         (fun in lst) and is_safe?(args)
-      nil ->
+      _ ->
         false
     end
   end
@@ -172,22 +175,6 @@ defmodule Tryelixir.Eval do
 
   defp is_safe?(_) do
     true
-  end
-
-  defp io_get(config) do
-    prefix = if config.cache != [], do: "..."
-
-    prompt = "#{prefix || "iex"}(#{config.counter})> "
-
-    case IO.gets(:stdio, prompt) do
-      :eof -> :eof
-      { :error, _ } -> ''
-      data -> :unicode.characters_to_list(data)
-    end
-  end
-
-  defp io_put(result) do
-    IO.puts "#{inspect result}"
   end
 
   defp print_exception(exception) do
