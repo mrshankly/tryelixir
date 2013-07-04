@@ -5,7 +5,7 @@ defmodule ApiRouter do
     conn.fetch :params
   end
 
-  push "/eval" do
+  post "/eval" do
     conn.resp(200, "#{conn.params[:code]}")
   end
 end

@@ -51,7 +51,7 @@ function onHandle(line, report) {
     }
     $.ajax({
         "type": "post",
-        "url": "api/eval",
+        "url": "/api/eval",
         "data": {"code": line},
         "dataType": "text",
         "success": function(result){
