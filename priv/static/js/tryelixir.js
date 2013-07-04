@@ -27,30 +27,24 @@ function onHandle(line, report) {
         case ":next":
             if (tutorialActive && currentPage < tutorialPages.length - 1)
                 goToPage(currentPage + 1);
-            return true;
+            break;
         case ":prev":
             if (tutorialActive && currentPage > 0)
                 goToPage(currentPage - 1);
-            return true;
+            break;
         case ":restart":
             if (tutorialActive)
                 goToPage(0);
-            return true;
+            break;
         case ":clear":
             shell();
             return true;
         case ":start":
             tutorialActive = true;
             goToPage(0);
-            return true;
-        default:
-            return line;
+            break;
     }
-    if (line == ":clear") {
-        shell();
-    } else {
-        return line;
-    }
+    return line;
 }
 
 function shell() {
