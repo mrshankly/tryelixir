@@ -1,6 +1,6 @@
 defmodule Tryelixir.Eval do
   @moduledoc """
-  Eval module for tryelixir, most of the code is the same as IEx.Server
+  Eval module for tryelixir, based on IEx.Server
   """
   @allowed_non_local HashDict.new [
     {Bitwise,  :all},
