@@ -2,6 +2,8 @@ defmodule Tryelixir.Eval do
   @moduledoc """
   Eval module for tryelixir, based on IEx.Server
   """
+  require IEx.Helpers
+
   @allowed_non_local HashDict.new [
     {Bitwise,  :all},
     {Dict,     :all},
@@ -15,27 +17,25 @@ defmodule Tryelixir.Eval do
     {Kernel,   [:access]}
   ]
 
-  @iex_helpers_r [:c, :ls, :cd, :flush, :l, :m, :pwd, :r, :import_file]
-  @iex_helpers_a [:h, :s, :t, :v]
-  @allowed_local [:&&, :.., :<>, :@, :access, :and, :atom_to_binary, :binary_to_atom,
-    :binary_to_existing_atom, :case, :cond, :div, :elem, :if, :in, :insert_elem,
-    :is_exception, :is_range, :is_record, :is_record, :is_regex, :match?, :nil?,
-    :or, :rem, :set_elem, :sigil_B, :sigil_C, :sigil_R, :sigil_W, :sigil_b,
-    :sigil_c, :sigil_r, :sigil_w, :to_binary, :to_char_list, :try, :unless, :use,
-    :xor, :|>, :||, :!, :!=, :!==, :*, :+, :+, :++, :-, :--, :/, :<, :<=, :=, :==,
-    :===, :=~, :>, :>=, :abs, :atom_to_binary, :atom_to_list, :binary_part,
-    :binary_to_atom, :binary_to_existing_atom, :binary_to_float, :binary_to_integer,
-    :binary_to_integer, :binary_to_list, :binary_to_list, :binary_to_term, :bit_size,
-    :bitstring_to_list, :byte_size, :float, :float_to_binary, :float_to_list, :hd,
-    :inspect, :integer_to_binary, :integer_to_list, :iolist_size, :iolist_to_binary,
-    :is_atom, :is_binary, :is_bitstring, :is_boolean, :is_float, :is_function,
-    :is_integer, :is_list, :is_number, :is_pid, :is_port, :is_reference, :is_tuple,
-    :length, :list_to_atom, :list_to_binary, :list_to_bitstring, :list_to_existing_atom,
-    :list_to_float, :list_to_integer, :list_to_tuple, :max, :min, :not,
-    :raise, :raise, :raise, :round, :size, :term_to_binary, :throw, :tl,
-    :trunc, :tuple_size, :tuple_to_list, :fn, :->, :&, :__block__]
+  # with 0 arity
+  @restricted_local [:binding, :is_alive, :make_ref, :node, :self]
+  @allowed_local [:&&, :.., :<>, :access, :and, :atom_to_binary, :binary_to_atom,
+    :case, :cond, :div, :elem, :if, :in, :insert_elem, :is_range, :is_record,
+    :is_regex, :match?, :nil?, :or, :rem, :set_elem, :sigil_B, :sigil_C, :sigil_R,
+    :sigil_W, :sigil_b, :sigil_c, :sigil_r, :sigil_w, :to_binary, :to_char_list,
+    :unless, :xor, :|>, :||, :!, :!=, :!==, :*, :+, :+, :++, :-, :--, :/, :<, :<=,
+    :=, :==, :===, :=~, :>, :>=, :abs, :atom_to_binary, :atom_to_list, :binary_part,
+    :binary_to_atom, :binary_to_float, :binary_to_integer, :binary_to_integer,
+    :binary_to_list, :binary_to_term, :bit_size, :bitstring_to_list, :byte_size,
+    :float, :float_to_binary, :float_to_list, :hd, :inspect, :integer_to_binary,
+    :integer_to_list, :iolist_size, :iolist_to_binary, :is_atom, :is_binary,
+    :is_bitstring, :is_boolean, :is_float, :is_function, :is_integer, :is_list,
+    :is_number, :is_tuple, :length, :list_to_atom, :list_to_binary, :list_to_bitstring,
+    :list_to_float, :list_to_integer, :list_to_tuple, :max, :min, :not, :round, :size,
+    :term_to_binary, :throw, :tl, :trunc, :tuple_size, :tuple_to_list, :fn, :->, :&,
+    :__block__, :"{}", :"<<>>"]
 
-  defrecord Config, counter: 1, binding: [], cache: "", result: nil
+  defrecord Config, counter: 1, binding: [], cache: '', result: nil, scope: nil
 
   @doc """
   Starts a new process of eval_loop. It does the following:
@@ -45,7 +45,8 @@ defmodule Tryelixir.Eval do
     * trap exceptions in the code being evaluated
   """
   def start do
-    spawn(fn -> eval_loop(Config.new) end)
+    scope = IEx.boot_config([]).scope
+    spawn(fn -> eval_loop(Config.new(scope: scope)) end)
   end
 
   defp eval_loop(config) do
@@ -56,14 +57,14 @@ defmodule Tryelixir.Eval do
             try do
               counter = config.counter
               code    = config.cache
-              eval(code, line, counter, config)
+              eval(code, binary_to_list(line), counter, config)
             rescue
               exception ->
-                config = config.cache("")
+                config = config.cache('')
                 config.result({"error", format_exception(exception)})
             catch
               kind, error ->
-                config = config.cache("")
+                config = config.cache('')
                 config.result({"error", format_error(kind, error)})
             end
 
@@ -74,13 +75,13 @@ defmodule Tryelixir.Eval do
       :exit ->
         :ok
     after
-      600000->
+      300000 ->
         :ok
     end
   end
 
   defp new_prompt(config) do
-    prefix = if config.cache != "", do: "..."
+    prefix = if config.cache != '', do: "..."
     "#{prefix || "iex"}(#{config.counter})> "
   end
 
@@ -94,25 +95,15 @@ defmodule Tryelixir.Eval do
   # to re-raise it.
   #
   # Returns updated config.
-  @break_trigger "#iex:break\n"
-  defp eval(_, @break_trigger, _, config=IEx.Config[cache: ""]) do
-    # do nothing
-    config
-  end
-
-  defp eval(_, @break_trigger, line_no, _) do
-    :elixir_errors.parse_error(line_no, "iex", 'incomplete expression', [])
-  end
-
   defp eval(code_so_far, latest_input, line_no, config) do
-    code = code_so_far <> latest_input
-    case Code.string_to_quoted(code) do
-      { :ok, form } ->
-        if is_safe? form do
-          {result, new_binding} =
-            Code.eval_quoted(form, config.binding, __ENV__)
+    code = code_so_far ++ latest_input
+    case :elixir_translator.forms(code, line_no, "iex", []) do
+      { :ok, forms } ->
+        if is_safe? forms do
+          {result, new_binding, scope} =
+            :elixir.eval_forms(forms, config.binding, config.scope)
 
-          config.counter(line_no + 1).cache("").binding(new_binding).result({"ok", result})
+          config.counter(line_no + 1).cache('').binding(new_binding).result({"ok", result}).scope(scope)
         else
           raise "restricted"
         end
@@ -121,7 +112,7 @@ defmodule Tryelixir.Eval do
         if token == [] do
           # Update config.cache in order to keep adding new input to
           # the unfinished expression in `code`
-          config.cache(code)
+          config.cache(code ++ '\n')
         else
           # Encountered malformed expression
           :elixir_errors.parse_error(line_no, "iex", error, token)
@@ -160,19 +151,17 @@ defmodule Tryelixir.Eval do
     is_safe?(left) and is_safe?(right)
   end
 
-  # check local functions
-  defp is_safe?({dot, _, nil}) do
-    (! dot in @iex_helpers_r)
-  end
-
   # limit range size
   defp is_safe?({:.., _, [begin, last]}) do
     (last - begin) <= 100 and last < 1000
   end
 
-  defp is_safe?({dot, _, args}) do
-    (dot in @iex_helpers_a) or
-    ((dot in @allowed_local) and is_safe?(args))
+  defp is_safe?({dot, _, nil}) when is_atom(dot) do
+    not dot in @restricted_local
+  end
+
+  defp is_safe?({dot, _, args}) when args != nil do
+    (dot in @allowed_local) and is_safe?(args)
   end
 
   defp is_safe?(lst) when is_list(lst) do
