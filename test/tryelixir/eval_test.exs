@@ -33,7 +33,7 @@ defmodule TryelixirTest do
   end
 
   test "restricted local function (no args)" do
-    assert {_, {"error", @restricted}} = test_eval("ls")
+    assert {_, {"error", @restricted}} = test_eval("self")
   end
 
   test "restricted local function" do
