@@ -13,6 +13,10 @@ defmodule ApiRouter do
   	resp = receive do
   		response ->
   			response
+    after
+      2000 ->
+        Process.exit(pid, :kill)
+        {"iex> ", {"error", "timeout"}}
   	end
 
     conn.resp(200, format_json(resp))
