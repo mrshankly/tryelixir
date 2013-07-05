@@ -82,6 +82,6 @@ $(document).ready(function() {
         autofocus: true,
         animateScroll: true,
         promptHistory: true,
-        welcomeMessage: "Interactive Elixir (0.9.4-dev) - (type h() ENTER for help)"
+        welcomeMessage: "Interactive Elixir (0.9.4-dev)"
     });
 });
