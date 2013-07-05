@@ -156,6 +156,7 @@ noscript > p {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;
+  word-wrap: break-word;
 }
 #console div.jquery-console-inner {
  height: 230px;
