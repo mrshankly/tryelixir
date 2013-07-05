@@ -33,7 +33,7 @@ defmodule Tryelixir.Eval do
     :length, :list_to_atom, :list_to_binary, :list_to_bitstring, :list_to_existing_atom,
     :list_to_float, :list_to_integer, :list_to_tuple, :max, :min, :not,
     :raise, :raise, :raise, :round, :size, :term_to_binary, :throw, :tl,
-    :trunc, :tuple_size, :tuple_to_list, :fn, :->, :&]
+    :trunc, :tuple_size, :tuple_to_list, :fn, :->, :&, :__block__]
 
   defrecord Config, counter: 1, binding: [], cache: "", result: nil
 
@@ -165,13 +165,22 @@ defmodule Tryelixir.Eval do
     (! dot in @iex_helpers_r)
   end
 
+  # limit range size
+  defp is_safe?({:.., _, [begin, last]}) do
+    (last - begin) <= 100 and last < 1000
+  end
+
   defp is_safe?({dot, _, args}) do
     (dot in @iex_helpers_a) or
     ((dot in @allowed_local) and is_safe?(args))
   end
 
   defp is_safe?(lst) when is_list(lst) do
-    Enum.all?(lst, fn(x) -> is_safe?(x) end)
+    if length(lst) <= 100 do
+      Enum.all?(lst, fn(x) -> is_safe?(x) end)
+    else
+      false
+    end
   end
 
   defp is_safe?(_) do
