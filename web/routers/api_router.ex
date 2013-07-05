@@ -9,6 +9,12 @@ defmodule ApiRouter do
   	pid = Dynamo.HTTP.Cookies.get_cookie(conn, :eval_pid)
   	|> Tryelixir.Cookie.decode |> binary_to_list |> list_to_pid
 
+    unless Process.alive? pid do
+      pid = Tryelixir.Eval.start
+      cookie = pid_to_list(pid) |> Tryelixir.Cookie.encode
+      conn = Dynamo.HTTP.Cookies.put_cookie(conn, :eval_pid, cookie)
+    end
+
   	pid <- {self, {:input, conn.params[:code]}}
   	resp = receive do
   		response ->
@@ -32,7 +38,7 @@ defmodule ApiRouter do
 
   defp format_json({prompt, {type, result}}) do
   	# show double-quotes in strings
-  	result = String.replace("#{inspect result}", "\"", "\\\"")
+  	result = String.replace("#{inspect(result, [limit: 50, raw: false])}", "\"", "\\\"")
   	%b/{"prompt":"#{prompt}","type":"#{type}","result":"#{result}"}/
   end
 end
