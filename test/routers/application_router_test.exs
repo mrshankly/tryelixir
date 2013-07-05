@@ -9,8 +9,13 @@ defmodule ApplicationRouterTest do
   # need to set the @endpoint to the router under test.
   @endpoint ApplicationRouter
 
-  test "returns OK" do
+  test "home returns OK" do
     conn = get("/")
+    assert conn.status == 200
+  end
+
+  test "about returns OK" do
+    conn = get("/about")
     assert conn.status == 200
   end
 end
