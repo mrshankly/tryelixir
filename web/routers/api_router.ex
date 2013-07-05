@@ -18,6 +18,10 @@ defmodule ApiRouter do
     conn.resp(200, format_json(resp))
   end
 
+  defp format_json({prompt, nil}) do
+    %b/{"prompt":"#{prompt}"}/
+  end
+
   defp format_json({prompt, {"error", result}}) do
   	%b/{"prompt":"#{prompt}","type":"error","result":"#{result}"}/
   end
