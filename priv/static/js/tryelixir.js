@@ -64,6 +64,8 @@ $(document).ready(function() {
                 "success": function(json){
                     obj = JSON.parse(json);
                     controller.promptLabel(obj.prompt);
+
+                    // If there's no result, just print prompt and keep adding new input
                     if (obj.result == undefined) {
                         report();
                     } else {
