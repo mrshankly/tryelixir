@@ -11,7 +11,7 @@ defmodule Tryelixir.Case do
   end
 
   def start_eval() do
-    pid = Tryelixir.Eval.start
+    Tryelixir.Eval.start
     |> Process.register(:test_eval)
   end
 
