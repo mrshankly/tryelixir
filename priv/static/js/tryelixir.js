@@ -27,17 +27,17 @@ function onHandle(line, report) {
         case ":next":
             if (tutorialActive && currentPage < tutorialPages.length - 1)
                 goToPage(currentPage + 1);
-            report(":next");
+            report([{msg:":next", className:"jquery-console-message-success"}]);
             return;
         case ":prev":
             if (tutorialActive && currentPage > 0)
                 goToPage(currentPage - 1);
-            report(":prev");
+            report([{msg:":prev", className:"jquery-console-message-success"}]);
             return;
         case ":restart":
             if (tutorialActive)
                 goToPage(0);
-            report(":restart");
+            report([{msg:":restart", className:"jquery-console-message-success"}]);
             return;
         case ":clear":
             shell();
@@ -46,7 +46,7 @@ function onHandle(line, report) {
         case ":start":
             tutorialActive = true;
             goToPage(0);
-            report(":start");
+            report([{msg:":start", className:"jquery-console-message-success"}]);
             return;
     }
     $.ajax({
@@ -54,8 +54,13 @@ function onHandle(line, report) {
         "url": "/api/eval",
         "data": {"code": line},
         "dataType": "text",
-        "success": function(result){
-            report([{msg:result, className:"jquery-console-message-success"}]);
+        "success": function(json){
+            obj = JSON.parse(json);
+            if (obj.type == "ok") {
+                report([{msg:obj.result, className:"jquery-console-message-success"}]);
+            } else {
+                report([{msg:obj.result, className:"jquery-console-message-error"}]);
+            }
         }
     });
     return;
