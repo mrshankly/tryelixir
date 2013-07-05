@@ -44,13 +44,13 @@ defmodule Tryelixir.Eval do
     * check if the code being evaluated is allowed
     * trap exceptions in the code being evaluated
   """
-  def start() do
+  def start do
     spawn(fn -> eval_loop(Config.new) end)
   end
 
   defp eval_loop(config) do
     receive do
-      {:input, line} ->
+      {from, {:input, line}} ->
         unless line == :eof do
           new_config =
             try do
@@ -59,14 +59,16 @@ defmodule Tryelixir.Eval do
               eval(code, line, counter, config)
             rescue
               exception ->
-                print_exception(exception)
-                config.cache("")
+                config = config.cache("")
+                config.result({"error", format_exception(exception)})
             catch
               kind, error ->
-                print_error(kind, error)
-                config.cache("")
+                config = config.cache("")
+                config.result({"error", format_error(kind, error)})
             end
-          print_result(new_config)
+
+          prompt = new_prompt(new_config)
+          from <- {prompt, new_config.result}
           eval_loop(new_config.result(nil))
         end
       :exit ->
@@ -74,13 +76,9 @@ defmodule Tryelixir.Eval do
     end
   end
 
-  defp print_result(config) do
+  defp new_prompt(config) do
     prefix = if config.cache != "", do: "..."
-    prompt = "#{prefix || "iex"}(#{config.counter})> "
-    if config.result != nil do
-      IO.puts "RESULT: #{inspect config.result}"
-    end
-    IO.puts "NEXT PROMPT: #{prompt}"
+    "#{prefix || "iex"}(#{config.counter})> "
   end
 
   # The expression is parsed to see if it's well formed.
@@ -111,7 +109,7 @@ defmodule Tryelixir.Eval do
           {result, new_binding} =
             Code.eval_quoted(form, config.binding, __ENV__)
 
-          config.counter(line_no + 1).cache("").binding(new_binding).result(result)
+          config.counter(line_no + 1).cache("").binding(new_binding).result({"ok", result})
         else
           raise "restricted"
         end
@@ -177,11 +175,11 @@ defmodule Tryelixir.Eval do
     true
   end
 
-  defp print_exception(exception) do
-    IO.puts "** (#{inspect exception.__record__(:name)}) #{exception.message}"
+  defp format_exception(exception) do
+    "** (#{inspect exception.__record__(:name)}) #{exception.message}"
   end
 
-  defp print_error(kind, reason) do
-    IO.puts "** (#{kind}) #{inspect(reason)}"
+  defp format_error(kind, reason) do
+    "** (#{kind}) #{inspect(reason)}"
   end
 end
