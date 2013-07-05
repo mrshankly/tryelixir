@@ -13,7 +13,7 @@ defmodule Tryelixir.Cookie do
 	def decode(cookie) do
 		<<signature :: [size(28), binary], ck :: binary>> = cookie
 		if signature == :base64.encode(:crypto.hash(:sha, [ck, @secret])) do
-			binary_to_list(:base64.decode(ck))
+			:base64.decode(ck)
 		else
 			:error
 		end

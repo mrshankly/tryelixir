@@ -7,7 +7,7 @@ defmodule ApiRouter do
 
   post "/eval" do
   	pid = Dynamo.HTTP.Cookies.get_cookie(conn, :eval_pid)
-  	|> Tryelixir.Cookie.decode |> list_to_pid
+  	|> Tryelixir.Cookie.decode |> binary_to_list |> list_to_pid
 
   	pid <- {self, {:input, conn.params[:code]}}
   	resp = receive do
