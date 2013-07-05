@@ -73,6 +73,9 @@ defmodule Tryelixir.Eval do
         end
       :exit ->
         :ok
+    after
+      600000->
+        :ok
     end
   end
 
