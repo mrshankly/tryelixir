@@ -205,6 +205,12 @@
 			return n;
 		};
 
+		extern.promptLabel = function(text) {
+			if (typeof text === 'string') {
+				promptLabel = text;
+			}
+		};
+
 		////////////////////////////////////////////////////////////////////////
 		// Make a new prompt box
 		function newPromptBox() {
@@ -432,7 +438,7 @@
 			var version = jQuery.fn.jquery.split('.');
 			var major = parseInt(version[0]);
 			var minor = parseInt(version[1]);
-			
+
 			// check if we're using jquery > 1.6
 			if ((major == 1 && minor > 6) || major > 1) {
 				inner.prop({ scrollTop: inner.prop("scrollHeight") });
