@@ -6,8 +6,8 @@ defmodule ApiRouter do
   end
 
   post "/eval" do
-  	pid = Dynamo.HTTP.Cookies.get_cookie(conn, :eval_pid)
-  	|> Tryelixir.Cookie.decode |> binary_to_list |> list_to_pid
+    pid = Dynamo.HTTP.Cookies.get_cookie(conn, :eval_pid)
+    |> Tryelixir.Cookie.decode |> binary_to_list |> list_to_pid
 
     unless Process.alive? pid do
       pid = Tryelixir.Eval.start
@@ -15,15 +15,15 @@ defmodule ApiRouter do
       conn = Dynamo.HTTP.Cookies.put_cookie(conn, :eval_pid, cookie)
     end
 
-  	pid <- {self, {:input, conn.params[:code]}}
-  	resp = receive do
-  		response ->
-  			response
+    pid <- {self, {:input, conn.params[:code]}}
+    resp = receive do
+      response ->
+        response
     after
       2000 ->
         Process.exit(pid, :kill)
         {"iex> ", {"error", "timeout"}}
-  	end
+    end
 
     conn.resp(200, format_json(resp))
   end
@@ -33,12 +33,12 @@ defmodule ApiRouter do
   end
 
   defp format_json({prompt, {"error", result}}) do
-  	%b/{"prompt":"#{prompt}","type":"error","result":"#{result}"}/
+    %b/{"prompt":"#{prompt}","type":"error","result":"#{result}"}/
   end
 
   defp format_json({prompt, {type, result}}) do
-  	# show double-quotes in strings
-  	result = String.replace("#{inspect result}", "\"", "\\\"")
-  	%b/{"prompt":"#{prompt}","type":"#{type}","result":"#{result}"}/
+    # show double-quotes in strings
+    result = String.replace("#{inspect result}", "\"", "\\\"")
+    %b/{"prompt":"#{prompt}","type":"#{type}","result":"#{result}"}/
   end
 end
