@@ -13,6 +13,7 @@ defmodule Tryelixir.Eval do
     {ListDict, :all},
     {Regex,    :all},
     {String,   :all},
+    {Binary.Chars, [:to_binary]}, # string interpolation
     {Kernel,   [:access]}
   ]
 
@@ -32,7 +33,7 @@ defmodule Tryelixir.Eval do
     :is_number, :is_tuple, :length, :list_to_atom, :list_to_binary, :list_to_bitstring,
     :list_to_float, :list_to_integer, :list_to_tuple, :max, :min, :not, :round, :size,
     :term_to_binary, :throw, :tl, :trunc, :tuple_size, :tuple_to_list, :fn, :->, :&,
-    :__block__, :"{}", :"<<>>"]
+    :__block__, :"{}", :"<<>>", :::, :lc, :inlist]
 
   defrecord Config, counter: 1, binding: [], cache: '', result: nil, scope: nil
 
@@ -74,6 +75,7 @@ defmodule Tryelixir.Eval do
       :exit ->
         :ok
     after
+      # kill the process after 5 minutes of idle
       300000 ->
         :ok
     end
