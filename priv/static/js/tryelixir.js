@@ -12,6 +12,18 @@ var tutorialPages = [
     {guide: "t3.html",
      trigger:function(result){
         return true;
+    }},
+    {guide: "t4.html",
+     trigger:function(result){
+        return true;
+    }},
+    {guide: "t5.html",
+     trigger:function(result){
+        return true;
+    }},
+    {guide: "t6.html",
+     trigger:function(result){
+        return true;
     }}
 ];
 
