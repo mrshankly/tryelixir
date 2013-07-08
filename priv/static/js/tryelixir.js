@@ -1,21 +1,32 @@
 var tutorialActive = false;
 var currentPage = 0;
 var tutorialPages = [
-    "t1.html",
-    "t2.html",
-    "t3.html"
+    {guide: "t1.html",
+     trigger:function(result){
+        return true;
+    }},
+    {guide: "t2.html",
+     trigger:function(result){
+        return true;
+    }},
+    {guide: "t3.html",
+     trigger:function(result){
+        return true;
+    }}
 ];
 
 function changeTutorial(index) {
     $("#tutorial").fadeOut("fast", function() {
-        $("#tutorial").load("static/tutorial/" + tutorialPages[index]);
+        $("#tutorial").load("static/tutorial/" + tutorialPages[index].guide);
         $("#tutorial").fadeIn("fast");
     });
 }
 
 function goToPage(number) {
-    currentPage = number;
-    changeTutorial(number);
+    if (number < tutorialPages.length && number >= 0) {
+        currentPage = number;
+        changeTutorial(number);
+    }
 }
 
 function onValidate(input) {
@@ -33,12 +44,12 @@ $(document).ready(function() {
         commandHandle: function(line, report) {
             switch (line) {
                 case ":next":
-                    if (tutorialActive && currentPage < tutorialPages.length - 1)
+                    if (tutorialActive)
                         goToPage(currentPage + 1);
                     report([{msg:":next", className:"jquery-console-message-success"}]);
                     return;
                 case ":prev":
-                    if (tutorialActive && currentPage > 0)
+                    if (tutorialActive)
                         goToPage(currentPage - 1);
                     report([{msg:":prev", className:"jquery-console-message-success"}]);
                     return;
@@ -73,6 +84,9 @@ $(document).ready(function() {
                             report([{msg:obj.result, className:"jquery-console-message-success"}]);
                         } else {
                             report([{msg:obj.result, className:"jquery-console-message-error"}]);
+                        }
+                        if (tutorialActive && tutorialPages[currentPage].trigger(obj.result)) {
+                            goToPage(currentPage + 1);
                         }
                     }
                 }
