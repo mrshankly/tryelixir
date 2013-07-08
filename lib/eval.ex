@@ -33,7 +33,7 @@ defmodule Tryelixir.Eval do
     :is_number, :is_tuple, :length, :list_to_atom, :list_to_binary, :list_to_bitstring,
     :list_to_float, :list_to_integer, :list_to_tuple, :max, :min, :not, :round, :size,
     :term_to_binary, :throw, :tl, :trunc, :tuple_size, :tuple_to_list, :fn, :->, :&,
-    :__block__, :"{}", :"<<>>", :::, :lc, :inlist]
+    :__block__, :"{}", :"<<>>", :::, :lc, :inlist, :bc, :inbits]
 
   defrecord Config, counter: 1, binding: [], cache: '', result: nil, scope: nil
 
@@ -157,6 +157,12 @@ defmodule Tryelixir.Eval do
     (last - begin) <= 100 and last < 1000
   end
 
+  # don't size and unit in :::
+  defp is_safe?({:::, _, [_, opts]}) do
+    do_opts(opts)
+  end
+
+  # check 0 arity local functions
   defp is_safe?({dot, _, nil}) when is_atom(dot) do
     not dot in @restricted_local
   end
@@ -176,6 +182,24 @@ defmodule Tryelixir.Eval do
   defp is_safe?(_) do
     true
   end
+
+  defp do_opts(opt) when is_tuple(opt) do
+    case opt do
+      {:size, _, _} -> false
+      {:unit, _, _} -> false
+      _ -> true
+    end
+  end
+
+  defp do_opts([h|t]) do
+    case h do
+      {:size, _, _} -> false
+      {:unit, _, _} -> false
+      _ -> do_opts(t)
+    end
+  end
+
+  defp do_opts([]), do: true
 
   defp format_exception(exception) do
     "** (#{inspect exception.__record__(:name)}) #{exception.message}"
