@@ -48,17 +48,17 @@ var tutorialPages = [
     }}
 ];
 
-function changeTutorial(index) {
+function animate(page) {
     $("#tutorial").fadeOut("fast", function() {
-        $("#tutorial").load("static/tutorial/" + tutorialPages[index].guide);
+        $("#tutorial").load(page);
         $("#tutorial").fadeIn("fast");
-    });
+    })
 }
 
 function goToPage(number) {
     if (number < tutorialPages.length && number >= 0) {
         currentPage = number;
-        changeTutorial(number);
+        animate("static/tutorial/" + tutorialPages[number].guide);
     }
 }
 
@@ -75,17 +75,17 @@ $(document).ready(function() {
                 case ":next":
                     if (tutorialActive)
                         goToPage(currentPage + 1);
-                    report([{msg:":next", className:"jquery-console-message-success"}]);
+                    report("");
                     return;
                 case ":prev":
                     if (tutorialActive)
                         goToPage(currentPage - 1);
-                    report([{msg:":prev", className:"jquery-console-message-success"}]);
+                    report("");
                     return;
                 case ":restart":
                     if (tutorialActive)
                         goToPage(1);
-                    report([{msg:":restart", className:"jquery-console-message-success"}]);
+                    report("");
                     return;
                 case ":clear":
                     controller.reset();
@@ -93,33 +93,45 @@ $(document).ready(function() {
                 case ":start":
                     tutorialActive = true;
                     goToPage(1);
-                    report([{msg:":start", className:"jquery-console-message-success"}]);
+                    report("");
                     return;
-            }
-            $.ajax({
-                "type": "post",
-                "url": "/api/eval",
-                "data": {"code": line},
-                "dataType": "text",
-                "success": function(json){
-                    obj = JSON.parse(json);
-                    controller.promptLabel(obj.prompt);
-
-                    // If there's no result, just print prompt and keep adding new input
-                    if (obj.result == undefined) {
-                        report();
-                    } else {
-                        if (obj.type == "ok") {
-                            report([{msg:obj.result, className:"jquery-console-message-success"}]);
-                        } else {
-                            report([{msg:obj.result, className:"jquery-console-message-error"}]);
-                        }
-                        if (tutorialActive && tutorialPages[currentPage].trigger(line, obj.result)) {
-                            goToPage(currentPage + 1);
-                        }
+                case ":steps":
+                    animate("static/tutorial/steps.html")
+                    report("");
+                    return;
+                default:
+                    var m = line.match(/^:step([1-9]+)/);
+                    if (m) {
+                        tutorialActive = true;
+                        goToPage(Number(m[1]));
+                        report("");
+                        return;
                     }
-                }
-            });
+                    $.ajax({
+                        "type": "post",
+                        "url": "/api/eval",
+                        "data": {"code": line},
+                        "dataType": "text",
+                        "success": function(json){
+                            obj = JSON.parse(json);
+                            controller.promptLabel(obj.prompt);
+
+                            // If there's no result, just print prompt and keep adding new input
+                            if (obj.result == undefined) {
+                                report();
+                            } else {
+                                if (obj.type == "ok") {
+                                    report([{msg:obj.result, className:"jquery-console-message-success"}]);
+                                } else {
+                                    report([{msg:obj.result, className:"jquery-console-message-error"}]);
+                                }
+                                if (tutorialActive && tutorialPages[currentPage].trigger(line, obj.result)) {
+                                    goToPage(currentPage + 1);
+                                }
+                            }
+                        }
+                    });
+            }
             return;
         },
         autofocus: true,
