@@ -41,17 +41,13 @@ function goToPage(number) {
     }
 }
 
-function onValidate(input) {
-    return (input != "");
-}
-
 $(document).ready(function() {
     $("#tutorial").load("static/intro.html");
     var console = $("#console");
     var controller = console.console({
         promptLabel: "iex(1)> ",
         commandValidate: function(input) {
-            return (input != "");
+            return (input != "" && input.length < 1000);
         },
         commandHandle: function(line, report) {
             switch (line) {
@@ -97,7 +93,7 @@ $(document).ready(function() {
                         } else {
                             report([{msg:obj.result, className:"jquery-console-message-error"}]);
                         }
-                        if (tutorialActive && tutorialPages[currentPage].trigger(obj.result)) {
+                        if (tutorialActive && tutorialPages[currentPage].trigger(line, obj.result)) {
                             goToPage(currentPage + 1);
                         }
                     }
@@ -108,6 +104,6 @@ $(document).ready(function() {
         autofocus: true,
         animateScroll: true,
         promptHistory: true,
-        welcomeMessage: "Interactive Elixir (0.9.4-dev)"
+        welcomeMessage: "Interactive Elixir (" + version.dataset.version + ")"
     });
 });

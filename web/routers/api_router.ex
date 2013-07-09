@@ -5,6 +5,10 @@ defmodule ApiRouter do
     conn.fetch [:cookies, :params]
   end
 
+  get "/version" do
+    conn.resp(200, System.version)
+  end
+
   post "/eval" do
     {eval_pid, conn} = case Dynamo.HTTP.Cookies.get_cookie(conn, :eval_pid) do
       nil ->

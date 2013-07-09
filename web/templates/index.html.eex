@@ -30,6 +30,7 @@
         <p class="text-center">Please enable javascript or upgrade your browser.</p>
       </noscript>
 
+      <div id="version" data-version=<%= @version %>>
       <div id="console"></div>
       <div id="tutorial"></div>
 

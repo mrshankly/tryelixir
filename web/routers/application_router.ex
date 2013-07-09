@@ -4,6 +4,7 @@ defmodule ApplicationRouter do
   forward "/api", to: ApiRouter
 
   get "/" do
+    conn = conn.assign(:version, System.version)
     render conn, "index.html"
   end
 
