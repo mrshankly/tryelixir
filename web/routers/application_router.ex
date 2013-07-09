@@ -13,6 +13,6 @@ defmodule ApplicationRouter do
   end
 
   get "/*" do
-    redirect conn, to: "/"
+    conn.resp(404, "404")
   end
 end
