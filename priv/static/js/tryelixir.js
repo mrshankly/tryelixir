@@ -27,10 +27,11 @@ var tutorialPages = [
     }},
     {guide: "t6.html",
      trigger:function(line, result){
-        if (line === "age") {
-            tutorialActive = false;
-            goToPage(0);
-        }
+        return (line === "age");
+    }},
+    {guide: "end.html",
+     trigger:function(line, result){
+        tutorialActive = false;
         return false;
     }}
 ];
