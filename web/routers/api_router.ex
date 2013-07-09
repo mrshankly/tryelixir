@@ -6,26 +6,39 @@ defmodule ApiRouter do
   end
 
   post "/eval" do
-    pid = Dynamo.HTTP.Cookies.get_cookie(conn, :eval_pid)
-    |> Tryelixir.Cookie.decode |> binary_to_list |> list_to_pid
+    {eval_pid, conn} = case Dynamo.HTTP.Cookies.get_cookie(conn, :eval_pid) do
+      nil ->
+        pid = Tryelixir.Eval.start
+        conn = put_cookie(pid, conn)
+        {pid, conn}
 
-    unless Process.alive? pid do
-      pid = Tryelixir.Eval.start
-      cookie = pid_to_list(pid) |> Tryelixir.Cookie.encode
-      conn = Dynamo.HTTP.Cookies.put_cookie(conn, :eval_pid, cookie)
+      encoded_pid ->
+        pid = Tryelixir.Cookie.decode(encoded_pid) |> binary_to_list |> list_to_pid
+
+        unless Process.alive? pid do
+          pid = Tryelixir.Eval.start
+          conn = put_cookie(pid, conn)
+        end
+
+        {pid, conn}
     end
 
-    pid <- {self, {:input, conn.params[:code]}}
+    eval_pid <- {self, {:input, conn.params[:code]}}
     resp = receive do
       response ->
         response
     after
       2000 ->
-        Process.exit(pid, :kill)
+        Process.exit(eval_pid, :kill)
         {"iex> ", {"error", "timeout"}}
     end
 
     conn.resp(200, format_json(resp))
+  end
+
+  defp put_cookie(pid, conn) do
+    cookie = pid_to_list(pid) |> Tryelixir.Cookie.encode
+    Dynamo.HTTP.Cookies.put_cookie(conn, :eval_pid, cookie)
   end
 
   defp format_json({prompt, nil}) do
