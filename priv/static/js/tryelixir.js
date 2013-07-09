@@ -29,6 +29,10 @@ var tutorialPages = [
      trigger:function(line, result){
         return (line === "age");
     }},
+    {guide: "t7.html",
+     trigger:function(line, result){
+        return (result === ":ok");
+    }},
     {guide: "end.html",
      trigger:function(line, result){
         tutorialActive = false;
