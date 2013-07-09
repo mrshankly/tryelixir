@@ -1,29 +1,37 @@
 var tutorialActive = false;
 var currentPage = 0;
 var tutorialPages = [
+    {guide: "intro.html",
+     trigger:function(line, result){
+        return false;
+    }},
     {guide: "t1.html",
-     trigger:function(result){
-        return true;
+     trigger:function(line, result){
+        return (result === "12");
     }},
     {guide: "t2.html",
-     trigger:function(result){
-        return true;
+     trigger:function(line, result){
+        return (result === "4");
     }},
     {guide: "t3.html",
-     trigger:function(result){
-        return true;
+     trigger:function(line, result){
+        return (result.charAt(0) === ":");
     }},
     {guide: "t4.html",
-     trigger:function(result){
-        return true;
+     trigger:function(line, result){
+        return (line.substring(0, 8) === "set_elem" && result.charAt(0) === "{")
     }},
     {guide: "t5.html",
-     trigger:function(result){
-        return true;
+     trigger:function(line, result){
+        return (result.charAt(0) === "[");
     }},
     {guide: "t6.html",
-     trigger:function(result){
-        return true;
+     trigger:function(line, result){
+        if (line === "age") {
+            tutorialActive = false;
+            goToPage(0);
+        }
+        return false;
     }}
 ];
 
@@ -42,7 +50,7 @@ function goToPage(number) {
 }
 
 $(document).ready(function() {
-    $("#tutorial").load("static/intro.html");
+    $("#tutorial").load("static/tutorial/intro.html");
     var console = $("#console");
     var controller = console.console({
         promptLabel: "iex(1)> ",
@@ -63,7 +71,7 @@ $(document).ready(function() {
                     return;
                 case ":restart":
                     if (tutorialActive)
-                        goToPage(0);
+                        goToPage(1);
                     report([{msg:":restart", className:"jquery-console-message-success"}]);
                     return;
                 case ":clear":
@@ -71,7 +79,7 @@ $(document).ready(function() {
                     return;
                 case ":start":
                     tutorialActive = true;
-                    goToPage(0);
+                    goToPage(1);
                     report([{msg:":start", className:"jquery-console-message-success"}]);
                     return;
             }
