@@ -27,13 +27,17 @@ var tutorialPages = [
     }},
     {guide: "t6.html",
      trigger:function(line, result){
-        return (line === "age" && result.substring(0, 2) !== "**");
+        return (result === "[97, 98, 99, 1]");
     }},
     {guide: "t7.html",
      trigger:function(line, result){
-        return (result === ":ok");
+        return (line === "age" && result.substring(0, 2) !== "**");
     }},
     {guide: "t8.html",
+     trigger:function(line, result){
+        return (result === ":ok");
+    }},
+    {guide: "t9.html",
      trigger:function(line, result){
         return (result === ":ok");
     }},
