@@ -33,7 +33,7 @@ defmodule Tryelixir.Eval do
     :is_number, :is_tuple, :length, :list_to_atom, :list_to_binary, :list_to_bitstring,
     :list_to_float, :list_to_integer, :list_to_tuple, :max, :min, :not, :round, :size,
     :term_to_binary, :throw, :tl, :trunc, :tuple_size, :tuple_to_list, :fn, :->, :&,
-    :__block__, :"{}", :"<<>>", :::, :lc, :inlist, :bc, :inbits]
+    :__block__, :"{}", :"<<>>", :::, :lc, :inlist, :bc, :inbits, :^, :when]
 
   defrecord Config, counter: 1, binding: [], cache: '', result: nil, scope: nil
 
