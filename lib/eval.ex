@@ -57,7 +57,7 @@ defmodule Tryelixir.Eval do
             try do
               counter = config.counter
               code    = config.cache
-              eval(code, binary_to_list(line), counter, config)
+              eval(code, :unicode.characters_to_list(line), counter, config)
             rescue
               exception ->
                 config = config.cache('')
