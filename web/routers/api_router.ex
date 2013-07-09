@@ -55,7 +55,7 @@ defmodule ApiRouter do
 
   defp format_json({prompt, {type, result}}) do
     # show double-quotes in strings
-    result = String.replace("#{inspect result}", "\"", "\\\"")
+    result = String.escape "#{inspect result}", ?"
     %b/{"prompt":"#{prompt}","type":"#{type}","result":"#{result}"}/
   end
 end
