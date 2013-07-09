@@ -23,7 +23,7 @@ var tutorialPages = [
     }},
     {guide: "t5.html",
      trigger:function(line, result){
-        return (result.charAt(0) === "[");
+        return (result === ":ok");
     }},
     {guide: "t6.html",
      trigger:function(line, result){
