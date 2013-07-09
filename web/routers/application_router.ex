@@ -11,4 +11,8 @@ defmodule ApplicationRouter do
   get "/about" do
     render conn, "about.html"
   end
+
+  get "/*" do
+    redirect conn, to: "/"
+  end
 end
