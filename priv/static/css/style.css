@@ -148,6 +148,21 @@ noscript > p {
   cursor: default;
 }
 
+#mlcode {
+  font-family: monospace;
+  margin-left: 15px;
+  margin-right: 15px;
+  color: #fff;
+  background-color: #4e2a5e;
+  padding: 0.2em;
+  cursor: default;
+  display: inline-block;
+}
+
+#mlcode tab {
+  padding-left: 1.2em;
+}
+
 #console {
   height: 250px;
   background-color: #fff8ed;
