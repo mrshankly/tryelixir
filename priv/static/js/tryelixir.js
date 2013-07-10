@@ -48,9 +48,46 @@ var tutorialPages = [
     }}
 ];
 
+// Removes <tab> and decodes html entities
+function decode(line) {
+    var temp = $("<div/>").html(line).text();
+    var temp2 = temp.replace("<tab>", "");
+    var decoded = temp2.replace("</tab>", "");
+    return decoded;
+}
+
+function makeCodeClickable() {
+    /* multi-line clicks not working */
+    /*$('#mlcode').each(function() {
+        $(this).attr('title','Click me to insert in the console.');
+        $(this).click(function(e) {
+            if (e.button == 0) {
+                var code = $(this).html().split("<br>");
+                controller.inner.click();
+                for (var i = 0; i < code.length; i++) {
+                    controller.promptText(decode(code[i]));
+                    //TODO
+                }
+            }
+        })
+    });*/
+    $('code').each(function() {
+        $(this).attr('title','Click me to insert "' +
+                         $(this).text() + '" in the console.');
+        $(this).click(function(e) {
+            if (e.button == 0) {
+                controller.promptText($(this).text());
+                controller.inner.click();
+            }
+        });
+    });
+}
+
 function animate(page) {
     $("#tutorial").fadeOut("fast", function() {
-        $("#tutorial").load(page);
+        $("#tutorial").load(page, function() {
+            makeCodeClickable();
+        });
         $("#tutorial").fadeIn("fast");
     })
 }
@@ -63,9 +100,8 @@ function goToPage(number) {
 }
 
 $(document).ready(function() {
-    $("#tutorial").load("static/tutorial/intro.html");
     var console = $("#console");
-    var controller = console.console({
+    controller = console.console({
         promptLabel: "iex(1)> ",
         commandValidate: function(input) {
             return (input != "" && input.length < 1000);
@@ -138,5 +174,8 @@ $(document).ready(function() {
         animateScroll: true,
         promptHistory: true,
         welcomeMessage: "Interactive Elixir (" + version.dataset.version + ")"
+    });
+    $("#tutorial").load("static/tutorial/intro.html", function() {
+        makeCodeClickable();
     });
 });
