@@ -50,6 +50,7 @@ defmodule ApiRouter do
   end
 
   defp format_json({prompt, {"error", result}}) do
+    result = String.escape "#{result}", ?"
     %b/{"prompt":"#{prompt}","type":"error","result":"#{result}"}/
   end
 
