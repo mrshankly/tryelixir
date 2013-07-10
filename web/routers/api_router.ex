@@ -50,13 +50,13 @@ defmodule ApiRouter do
   end
 
   defp format_json({prompt, {"error", result}}) do
-    result = String.escape "#{result}", ?"
+    result = String.escape result, ?"
     %b/{"prompt":"#{prompt}","type":"error","result":"#{result}"}/
   end
 
   defp format_json({prompt, {type, result}}) do
     # show double-quotes in strings
-    result = String.escape "#{inspect result}", ?"
+    result = String.escape inspect(result), ?"
     %b/{"prompt":"#{prompt}","type":"#{type}","result":"#{result}"}/
   end
 end
