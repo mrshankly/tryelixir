@@ -44,6 +44,11 @@ defmodule TryelixirTest do
     assert {_, {"error", @restricted}} = test_eval("spawn(fn -> 1 + 1 end)")
   end
 
+  test "undefined local" do
+    assert {_, {"error", "** (CompileError) " <> _}}
+           = test_eval("ls")
+  end
+
   test "Kernel access" do
     test_eval("foo = [a: 1, b: 2, c: 3]")
     assert {_, {"ok", 2}} = test_eval("foo[:b]")

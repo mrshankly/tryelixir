@@ -46,6 +46,7 @@ defmodule Tryelixir.Eval do
   """
   def start do
     scope = IEx.boot_config([]).scope
+    scope = :elixir.scope_for_eval(scope, delegate_locals_to: nil)
     spawn(fn -> eval_loop(Config.new(scope: scope)) end)
   end
 
