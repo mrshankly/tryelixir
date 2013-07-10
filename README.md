@@ -12,7 +12,7 @@ and Chris Done's [jquery-console](https://github.com/chrisdone/jquery-console).
 
     MIX_ENV=prod mix do deps.get, server
   
-Disclamer: Modules and functions are white-listed, but beware, this it may allow random code to run on your machine,
+Disclamer: Modules and functions are white-listed, but beware, random code might be able to run on your machine,
 be careful.
 
 ## License
