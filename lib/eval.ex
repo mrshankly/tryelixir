@@ -8,13 +8,17 @@ defmodule Tryelixir.Eval do
     {Dict,         :all},
     {Enum,         :all},
     {HashDict,     :all},
+    {HashSet,      :all},
     {Keyword,      :all},
     {List,         :all},
     {ListDict,     :all},
     {Regex,        :all},
+    {Set,          :all},
+    {Stream,       :all},
     {String,       :all},
     {Binary.Chars, [:to_binary]}, # string interpolation
     {Kernel,       [:access]},
+    {System,       [:version]},
     {:calendar,    :all},
     {:math,        :all},
     {:os,          [:type, :version]}
