@@ -104,7 +104,7 @@ $(document).ready(function() {
     controller = console.console({
         promptLabel: "iex(1)> ",
         commandValidate: function(input) {
-            return (input != "" && input.length < 1000);
+            return (input.length < 1000);
         },
         commandHandle: function(line, report) {
             switch (line) {
