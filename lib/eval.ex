@@ -4,17 +4,20 @@ defmodule Tryelixir.Eval do
   """
 
   @allowed_non_local HashDict.new [
-    {Bitwise,  :all},
-    {Dict,     :all},
-    {Enum,     :all},
-    {HashDict, :all},
-    {Keyword,  :all},
-    {List,     :all},
-    {ListDict, :all},
-    {Regex,    :all},
-    {String,   :all},
+    {Bitwise,      :all},
+    {Dict,         :all},
+    {Enum,         :all},
+    {HashDict,     :all},
+    {Keyword,      :all},
+    {List,         :all},
+    {ListDict,     :all},
+    {Regex,        :all},
+    {String,       :all},
     {Binary.Chars, [:to_binary]}, # string interpolation
-    {Kernel,   [:access]}
+    {Kernel,       [:access]},
+    {:calendar,    :all},
+    {:math,        :all},
+    {:os,          [:type, :version]}
   ]
 
   # with 0 arity
