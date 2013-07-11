@@ -16,8 +16,8 @@
 
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
-          <li class="active"><a href="/">Home</a></li>
-          <li><a href="/about">About</a></li>
+          <li><a href="/">Home</a></li>
+          <li class="active"><a href="/about">About</a></li>
           <li><a href="https://github.com/tryelixir/tryelixir.org" target="_blank">Source</a></li>
         </ul>
         <img class="pull-left" src="static/drop.png" width="48" height="48">
