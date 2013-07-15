@@ -85,10 +85,10 @@ function makeCodeClickable() {
 
 function animate(page) {
     $("#tutorial").fadeOut("fast", function() {
-        $("#tutorial").load(page, function() {
+        $(this).load(page, function() {
             makeCodeClickable();
+            $(this).fadeIn("fast");
         });
-        $("#tutorial").fadeIn("fast");
     })
 }
 
