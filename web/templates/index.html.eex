@@ -40,9 +40,9 @@
       <p class="text-center">Copyright © 2013 João Marques and Gonçalo Cabrita</p>
     </div>
     <script type="text/javascript">
-      document.cookie="test";
+      document.cookie="testcookie";
         if (document.cookie.indexOf("testcookie") != -1) {
-          document.cookie = "test=;expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+          document.cookie = "testcookie=;expires=Thu, 01 Jan 1970 00:00:01 GMT;";
         } else {
           document.getElementById("nocookies").innerHTML = '<p class="text-center">Try Elixir requires cookies to work properly.</p>';
         }
