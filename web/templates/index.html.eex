@@ -26,6 +26,7 @@
 
       <hr>
 
+      <div id="nocookies"></div>
       <noscript>
         <p class="text-center">Please enable javascript or upgrade your browser.</p>
       </noscript>
@@ -39,16 +40,12 @@
       <p class="text-center">Copyright © 2013 João Marques and Gonçalo Cabrita</p>
     </div>
     <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-42354690-1']);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-
+      document.cookie="test";
+        if (document.cookie.indexOf("testcookie") != -1) {
+          document.cookie = "test=;expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+        } else {
+          document.getElementById("nocookies").innerHTML = '<p class="text-center">Try Elixir requires cookies to work properly.</p>';
+        }
     </script>
   </body>
 </html>
