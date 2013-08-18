@@ -38,8 +38,7 @@ defmodule ApiRouter do
         Process.exit(eval_pid, :kill)
         {"iex> ", {"error", "timeout"}}
     end
-    IO.inspect resp
-    IO.puts "#{format_json resp}"
+
     conn.resp(200, format_json(resp))
   end
 
