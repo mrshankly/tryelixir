@@ -38,7 +38,8 @@ defmodule ApiRouter do
         Process.exit(eval_pid, :kill)
         {"iex> ", {"error", "timeout"}}
     end
-
+    IO.inspect resp
+    IO.puts "#{format_json resp}"
     conn.resp(200, format_json(resp))
   end
 
@@ -58,13 +59,13 @@ defmodule ApiRouter do
   end
 
   defp format_json({prompt, {"error", result}}) do
-    result = String.escape result, ?"
+    result = Inspect.BitString.escape result, ?"
     %b/{"prompt":"#{prompt}","type":"error","result":"#{result}"}/
   end
 
   defp format_json({prompt, {type, result}}) do
     # show double-quotes in strings
-    result = String.escape inspect(result), ?"
+    result = Inspect.BitString.escape inspect(result), ?"
     %b/{"prompt":"#{prompt}","type":"#{type}","result":"#{result}"}/
   end
 end
