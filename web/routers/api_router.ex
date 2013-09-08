@@ -20,7 +20,7 @@ defmodule ApiRouter do
             :error ->
               start_eval(conn)
             cookie ->
-              pid = binary_to_list(cookie) |> list_to_pid
+              pid = String.to_char_list!(cookie) |> list_to_pid
               unless Process.alive? pid do
                 start_eval(conn)
               else
