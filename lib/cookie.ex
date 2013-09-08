@@ -2,7 +2,7 @@ defmodule Tryelixir.Cookie do
   @moduledoc """
   Signed cookies.
   """
-  @secret "change_me"
+  @secret :base64.encode(:crypto.strong_rand_bytes(30))
 
   def encode(cookie) do
     ck = :base64.encode(cookie)
