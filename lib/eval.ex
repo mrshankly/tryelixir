@@ -33,11 +33,11 @@ defmodule Tryelixir.Eval do
     :unless, :xor, :|>, :||, :!, :!=, :!==, :*, :+, :+, :++, :-, :--, :/, :<, :<=,
     :=, :==, :===, :=~, :>, :>=, :abs, :atom_to_binary, :atom_to_list, :binary_part,
     :binary_to_atom, :binary_to_float, :binary_to_integer, :binary_to_integer,
-    :binary_to_list, :binary_to_term, :bit_size, :bitstring_to_list, :byte_size,
+    :binary_to_term, :bit_size, :bitstring_to_list, :byte_size,
     :float, :float_to_binary, :float_to_list, :hd, :inspect, :integer_to_binary,
     :integer_to_list, :iolist_size, :iolist_to_binary, :is_atom, :is_binary,
     :is_bitstring, :is_boolean, :is_float, :is_function, :is_integer, :is_list,
-    :is_number, :is_tuple, :length, :list_to_atom, :list_to_binary, :list_to_bitstring,
+    :is_number, :is_tuple, :length, :list_to_atom, :list_to_bitstring,
     :list_to_float, :list_to_integer, :list_to_tuple, :max, :min, :not, :round, :size,
     :term_to_binary, :throw, :tl, :trunc, :tuple_size, :tuple_to_list, :fn, :->, :&,
     :__block__, :"{}", :"<<>>", :::, :lc, :inlist, :bc, :inbits, :^, :when, :|]
