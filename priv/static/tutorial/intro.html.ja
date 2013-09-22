@@ -1,16 +1,16 @@
-<h3>Introduction(ja)</h3>
+<h3>導入</h3>
 <p>
-    Elixir is a modern functional language built on top of the Erlang VM.
-    It’s fully compatible with Erlang, but features a more standard syntax and many more features.
+    ElixirはErlang VM上で動作するモダンな関数型言語です。
+    Erlangと完全な互換性を持ちながら、標準的な言語の文法を備え、さらに機能が追加されています。
 </p>
 
 <p>
-    To start this tutorial type <code>:start</code> . You can use the commands <code>:next</code>
-    and <code>:prev</code> to navigate through the tutorial. Type <code>:steps</code> to see the list
-    of contents. It's also possible to go back to the beginning by typing
-    <code>:restart</code> .
+    このチュートリアルを開始するために<code>:start</code>とタイプしてください。
+    <code>:next</code>で次のチュートリアルに、<code>:prev</code>で前のチュートリアルに戻ることができます。
+    また、<code>:steps</code>で一覧を見ることができます。
+    <code>:restart</code>で最初(:step1)に戻れます。
 </p>
 <p>
-    To clear the console type <code>:clear</code> . You can click the code snippets to insert them in the
-    console.
+    画面をクリアしたいときは<code>:clear</code>とタイプしてください。
+    コードスニペット(濃い紫の背景)の部分をクリックするとそれをコンソールに挿入できます。
 </p>
