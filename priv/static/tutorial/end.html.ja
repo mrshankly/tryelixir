@@ -1,0 +1,12 @@
+<h3>The end(ja)</h3>
+
+<p>You're done!</p>
+<p>
+	Now that you've gotten a feel for the syntax of Elixir maybe you should read a book on it to improve your skills? Here are a couple of good ones, <a href="http://pragprog.com/book/elixir/programming-elixir">Programming Elixir (Pragmatic Programmers)</a> and <a href="http://shop.oreilly.com/product/0636920030584.do">Introducing Elixir (O'Reilly)</a>.
+</p>
+<p>
+    If you'd like a more pragmatic approach rather than read a book you could take a look at the official <a href="http://elixir-lang.org/getting_started/1.html">Getting Started guide</a>. However, if you come from the Erlang world maybe the <a href="http://elixir-lang.org/crash-course.html">Crash Course for Erlang developers</a> would better suit you.
+</p>
+<p>
+    You should also hop on #elixir-lang @ irc.freenode.org if you have any questions!
+</p>

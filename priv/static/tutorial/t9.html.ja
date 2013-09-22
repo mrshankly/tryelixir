@@ -1,0 +1,24 @@
+<h3>Functions(ja)</h3>
+<p>
+	We're not going to talk much about named functions or how to define them, to learn more about
+	that check the links provided at the end of this tutorial.
+</p>
+<p>An anonymous function is created with the <code>fn</code> keyword:</p>
+<p><code>f = fn(x) -> x * 2 end</code></p>
+<p>
+	To call the function we simply type <code>f.(3)</code> . Notice the dot on the function
+	call, the dot is required on anonymous functions, it's not needed on named functions though:
+</p>
+<p><code>Enum.map([1, 2, 3], fn(x) -> x * 2 end)</code></p>
+<p>Parentheses around the arguments of a named function are optional:</p>
+<p><code>Enum.map [1, 2, 3], fn(x) -> x * 2 end</code></p>
+<p>
+	In the above function call <code>Enum</code> indicates the name of the module, <code>map</code> is the
+	function we want to call inside that module. The number of parameters in a function is referred as the
+	arity of the function, and it's usual to refer to functions as <code>Enum.map/2</code> . This means that
+	<code>Enum.map</code> has an arity of 2.
+</p>
+<p>Anonymous functions also accept various clauses and guards:</p>
+<p><div id="mlcode">g = fn<br><tab>x, y when x > 0 -> x + y</tab><br><tab>x, y -> x * y</tab><br>end</div></p>
+<p>To test this try <code>g.(1, 3)</code> and <code>g.(-1, 3)</code></p>
+<p>When you're ready to jump to the next step on the tutorial type <code>:ok</code> .</p>

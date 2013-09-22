@@ -1,0 +1,10 @@
+<h3>Variables(ja)</h3>
+<p>
+    Variables are used to store values. In Elixir variables start with a lower case letter or an
+    underscore. Variables that start with an underscore are useful when we need a variable but
+    its value can be ignored.
+</p>
+<p>Try to write the following:</p>
+<p><code>age = 25</code></p>
+<p>We can check the value of a variable simply by typing its name:</p>
+<p><code>age</code></p>

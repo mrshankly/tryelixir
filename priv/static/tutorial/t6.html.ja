@@ -1,0 +1,23 @@
+<h3>Strings and char lists(ja)</h3>
+<p>
+    In Elixir double-quoted strings are not the same as single-quoted strings. Double-quoted strings are
+    represented as binaries, a sequence of bytes in UTF-8 encodings. Single-quoted strings are represented
+    as a list of integers, because of this we refer to them as char lists.
+</p>
+<p>To confirm what I've just said, try the following:</p>
+<p><code>is_binary "hello"</code></p>
+<p><code>is_list 'hello'</code></p>
+<p><code>"hello" == 'hello'</code></p>
+<p>
+    Strings are all encoded in UTF-8, you can type <code>"héllò"</code> and see for yourself.
+</p>
+<p>
+    We can get the ASCII integer of a letter with the <code>?</code> operator, <code>?a</code> will return
+    <code>97</code> .
+</p>
+<p>This means we can also write:</p>
+<p><code>[?a, ?b, ?c]</code></p>
+<p>
+    Elixir detects that all characters in the list are printable and returns the quoted representation. Adding
+    a non-printable character will print a normal list. Try to write <code>[?a, ?b, ?c, 1]</code> .
+</p>
