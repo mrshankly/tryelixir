@@ -1,9 +1,9 @@
 <h3>コンテンツ一覧</h3>
 <div id="steps">
-	<li><code>:step1</code> - ウォームアップ.</li>
-	<li><code>:step2</code> - 基礎.</li>
+	<li><code>:step1</code> - ウォームアップ</li>
+	<li><code>:step2</code> - 基礎</li>
 	<li><code>:step3</code> - アトム</li>
-	<li><code>:step4</code> - Tuples.</li>
+	<li><code>:step4</code> - タプル</li>
 	<li><code>:step5</code> - Lists.</li>
 	<li><code>:step6</code> - Strings and char lists.</li>
 	<li><code>:step7</code> - Variables.</li>

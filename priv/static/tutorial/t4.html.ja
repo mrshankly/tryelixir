@@ -1,16 +1,17 @@
-<h3>Tuples(ja)</h3>
+<h3>タプル</h3>
 <p>
-    Tuples let you combine multiple items into a single data type, all you need to make a tuple is
-    surround a group of items with curly braces:
+    タプルを使うとは複数のアイテムを一つのデータタイプにできます。
+    タプルを作るためにアイテムのグループを中括弧で囲みます。
 </p>
 <p><code>{:radius, 20}</code></p>
 <p><code>{:foo, :bar, 123}</code></p>
 <p>
-    To access a tuple element use the built-in function <code>elem</code> . Try it yourself,
-    <code>elem {1,2,3}, 0</code> .
+    タプルの要素にアクセスするには組み込み関数<code>elem</code>を使います。
+    これを試してみてください<code>elem {1,2,3}, 0</code>。
 </p>
 <p>
-    In the same way, it's also possible to set the value of the nth element of a tuple by doing,
-    <code>set_elem {:one, :two, :three}, 0, :four</code> .
+    同じ方法で、タプルのn番目要素に値セットするには
+    <code>set_elem {:one, :two, :three}, 0, :four</code> 
+    とします。
 </p>
-<p>Now try to use the set_elem function to go to the next step of the tutorial.</p>
+<p>次のステップに進むためにset_elem関数を使ってみましょう</p>
