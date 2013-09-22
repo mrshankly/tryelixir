@@ -4,7 +4,7 @@
 	<li><code>:step2</code> - 基礎</li>
 	<li><code>:step3</code> - アトム</li>
 	<li><code>:step4</code> - タプル</li>
-	<li><code>:step5</code> - Lists.</li>
+	<li><code>:step5</code> - リスト</li>
 	<li><code>:step6</code> - Strings and char lists.</li>
 	<li><code>:step7</code> - Variables.</li>
 	<li><code>:step8</code> - Pattern Matching.</li>

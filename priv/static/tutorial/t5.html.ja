@@ -1,11 +1,11 @@
-<h3>Lists(ja)</h3>
+<h3>リスト</h3>
 <p>
-    Lists in Elixir are delimited by square brackets and their elements are separated by commas.
-    Element of a list can be of different types.
+    Elixirのリストはカンマ区切りの角括弧で表されます。
+    リストのそれぞれの要素は違う型でも構いません。
 </p>
 <p><code>[1, 2, 3]</code></p>
 <p><code>[ 1, :two, [3, 4] ]</code></p>
-<p>To access the head and tail of a list we use pattern matching and the <code>|</code> operator:</p>
+<p>リストの頭にアクセスするためにパターンマッチング演算子<code>|</code>を使います。</p>
 <p><code>[head | tail] = [1,2,3]</code></p>
-<p>Try to type <code>head</code> and <code>tail</code> .</p>
-<p>When you're ready to jump to the next step on the tutorial type <code>:ok</code> .</p>
+<p>上記を打ったあと<code>head</code>と<code>tail</code>を打ってそれぞれどうなるか確かめてみてください。</p>
+<p>もし次のステップに行く準備ができたら<code>:ok</code>とタイプしてくださいね 。</p>
