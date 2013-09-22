@@ -103,7 +103,7 @@ function animate(page) {
 function goToPage(number) {
     if (number < tutorialPages.length && number >= 0) {
         currentPage = number;
-        animate("static/tutorial/" + tutorialPages[number].guide + guideSuffix);
+        animate("static/tutorial/" + tutorialPages[number].guide + '.' + guideSuffix);
     }
 }
 
