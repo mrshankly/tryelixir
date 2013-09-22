@@ -1,13 +1,12 @@
-<h3>Basics(ja)</h3>
+<h3>基礎</h3>
 <p>
-    We've got back the number <code>12</code> . In interactive mode we can type an Elixir expression
-    and get the result straight away.
+    数字の<code>12</code>が表示されたでしょ? インタラクティブモードではElixirの式を打つとそのまま結果を得られます。
 </p>
 <p>
-    Addition is not the only operation we can do with numbers, there's also subtraction, multiplication
-    and division. Try to type something like <code>20 - 6</code> or <code>6 * 3</code> . Floating point
-    division is done with the <code>/</code> operator, for integer division use the function <code>div</code> .
+    数字に適応できるのは足し算だけではなく、引き算、掛け算や割り算なども可能です。
+    それでは<code>20 - 6</code> や <code>6 * 3</code>を試してみましょう。
+    浮動小数点の割り算は<code>/</code>を整数の割り算であれば<code>div</code>を演算子として使えます。
 </p>
 <p>
-    Try typing <code>12 / 3</code> and <code>div 12, 3</code> to see the difference.
+    <code>12 / 3</code> と <code>div 12, 3</code>を試してみて違いを確かめてみてください。
 </p>
