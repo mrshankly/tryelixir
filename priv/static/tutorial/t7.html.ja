@@ -1,10 +1,10 @@
-<h3>Variables(ja)</h3>
+<h3>変数</h3>
 <p>
-    Variables are used to store values. In Elixir variables start with a lower case letter or an
-    underscore. Variables that start with an underscore are useful when we need a variable but
-    its value can be ignored.
+    変数は値を保存するために使われます。
+    Elixirの変数は小文字またはアンダースコアで始まります。
+    アンダースコアで始まる変数はとても使いやすいがそれを無視することもできます。
 </p>
-<p>Try to write the following:</p>
+<p>上記を確かめてみましょう:</p>
 <p><code>age = 25</code></p>
-<p>We can check the value of a variable simply by typing its name:</p>
-<p><code>age</code></p>
+<p>変数の中の値を確かめるには単純に</p>
+<p><code>age</code>と打って確かめられます。</p>
