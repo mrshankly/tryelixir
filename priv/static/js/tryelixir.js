@@ -3,6 +3,11 @@ var currentPage = 0;
 var guideSuffix = (function() {
   try {
     var lang = (navigator.browserLanguage || navigator.language || navigator.userLanguage).substr(0,2)
+
+    lang = $.inArray(lang,
+              ['ja'] //add if you create support language files.
+                    ) ? lang : 'en';
+
     return 'en' == lang ? '' : '.' + lang
   } catch(e) {}
   return '';
