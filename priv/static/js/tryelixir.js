@@ -6,7 +6,7 @@ var guideSuffix = (function() {
 
     lang = $.inArray(lang,
               ['ja'] //add if you create support language files.
-                    ) ? lang : 'en';
+                    ) == -1 ? 'en' : lang;
 
     return 'en' == lang ? '' : '.' + lang
   } catch(e) {}
