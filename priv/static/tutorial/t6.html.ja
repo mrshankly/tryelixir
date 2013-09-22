@@ -1,23 +1,26 @@
-<h3>Strings and char lists(ja)</h3>
+<h3>文字列と文字のリスト</h3>
 <p>
-    In Elixir double-quoted strings are not the same as single-quoted strings. Double-quoted strings are
-    represented as binaries, a sequence of bytes in UTF-8 encodings. Single-quoted strings are represented
-    as a list of integers, because of this we refer to them as char lists.
+    Elixirでは二重引用符で囲まれた文字列と一重引用符で囲まれた文字列は違う意味になります。
+    二重引用符はUTF-8エンコードされたバイナリとして表現され、
+    一重引用符は文字のリストとして参照するために数字のリストと表現されます。
 </p>
-<p>To confirm what I've just said, try the following:</p>
+<p>上記を確認するために次のコードを確かめてみてください:</p>
 <p><code>is_binary "hello"</code></p>
 <p><code>is_list 'hello'</code></p>
 <p><code>"hello" == 'hello'</code></p>
 <p>
-    Strings are all encoded in UTF-8, you can type <code>"héllò"</code> and see for yourself.
+    文字列はすべてUTF-8でエンコードされます。
+    <code>"héllò"</code>を試してみてそれを確認ください。
 </p>
 <p>
-    We can get the ASCII integer of a letter with the <code>?</code> operator, <code>?a</code> will return
-    <code>97</code> .
+    文字のASCII数字をしらべたいなら<code>?</code>演算子が使えます。
+    例えば<code>?a</code>は<code>97</code>が帰ってきます 。
+    
 </p>
-<p>This means we can also write:</p>
+<p>それは次のようにかけることを意味します:</p>
 <p><code>[?a, ?b, ?c]</code></p>
 <p>
-    Elixir detects that all characters in the list are printable and returns the quoted representation. Adding
-    a non-printable character will print a normal list. Try to write <code>[?a, ?b, ?c, 1]</code> .
+    Elixirはリスト中のすべての文字が印字可能か検知しもしそうだったらリストを引用符で表現します。
+    印字可能でなければ普通のリストとして表現します。
+    <code>[?a, ?b, ?c, 1]</code>を試してみてください 。
 </p>
