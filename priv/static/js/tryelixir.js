@@ -1,14 +1,14 @@
 var tutorialActive = false;
 var currentPage = 0;
-var guideSuffix = (function() {
+var guideDirectory = (function() {
   try {
     var lang = (navigator.browserLanguage || navigator.language || navigator.userLanguage).substr(0,2)
 
     lang = $.inArray(lang,
               ['ja'] //add if you create support language files.
-                    ) == -1 ? 'en' : lang;
+                    ) == -1 ? 'en/' : lang + '/';
 
-    return 'en' == lang ? '' : '.' + lang
+    return lang;
   } catch(e) {}
   return '';
 })();
@@ -108,7 +108,7 @@ function animate(page) {
 function goToPage(number) {
     if (number < tutorialPages.length && number >= 0) {
         currentPage = number;
-        animate("static/tutorial/" + tutorialPages[number].guide + guideSuffix);
+        animate("static/tutorial/" + guideDirectory + tutorialPages[number].guide);
     }
 }
 
@@ -145,7 +145,7 @@ $(document).ready(function() {
                     report("");
                     return;
                 case ":steps":
-                    animate("static/tutorial/steps.html")
+                    animate("static/tutorial/" + guideDirectory + "steps.html")
                     report("");
                     return;
                 default:
@@ -188,7 +188,7 @@ $(document).ready(function() {
         promptHistory: true,
         welcomeMessage: "Interactive Elixir (" + version.dataset.version + ")"
     });
-    $("#tutorial").load("static/tutorial/intro.html" + guideSuffix, function() {
+    $("#tutorial").load("static/tutorial/" + guideDirectory + "intro.html", function() {
         makeCodeClickable();
     });
 });
