@@ -11,9 +11,13 @@ and Chris Done's [jquery-console](https://github.com/chrisdone/jquery-console).
 ## How to run
 
     MIX_ENV=prod mix do deps.get, server
-  
+
 Disclamer: Modules and functions are white-listed, but beware, random code might be able to run on your machine,
 be careful.
+
+## Translations
+
+If you wish to translate Try Elixir, please follow the [Translation Guide](https://github.com/tryelixir/tryelixir/blob/master/TRANSLATION.md).
 
 ## License
 
