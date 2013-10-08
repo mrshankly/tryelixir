@@ -151,7 +151,7 @@ $(document).ready(function() {
 					report("");
 					return;
 				default:
-					var m = line.match(/^:step([1-9]+)/);
+					var m = line.match(/^:step([1-11]+)/);
 					if (m) {
 						tutorialActive = true;
 						goToPage(Number(m[1]));
