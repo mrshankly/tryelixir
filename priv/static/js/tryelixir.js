@@ -54,6 +54,14 @@ var tutorialPages = [
 	 trigger:function(line, result){
 		return (result === ":ok");
 	}},
+	{guide: "t10.html",
+	 trigger:function(line, result){
+		return (result === ":ok");
+	}},
+	{guide: "t11.html",
+	 trigger:function(line, result){
+		return (result === ":ok");
+	}},
 	{guide: "end.html",
 	 trigger:function(line, result){
 		tutorialActive = false;
