@@ -3,17 +3,17 @@
 <p>An anonymous function is created with the <code><span class="k">fn</span></code> keyword:</p>
 <p><code>f <span class="o">=</span> <span class="k">fn</span>(x) <span class="o">-&gt;</span> x <span class="o">*</span> <span class="m">2</span> <span class="k">end</span></code></p>
 <p>
-	To call the function we simply type <code>f<span class="o">.</span>(<span class="m">3</span>)</code> . Notice the dot on the function
-	call, the dot is required on anonymous functions, it's not needed on named functions though:
+To call the function we simply type <code>f<span class="o">.</span>(<span class="m">3</span>)</code> . Notice the dot on the function
+call, the dot is required on anonymous functions, it's not needed on named functions though:
 </p>
 <p><code><span class="no">Enum</span><span class="o">.</span>map([<span class="m">1</span>, <span class="m">2</span>, <span class="m">3</span>], <span class="k">fn</span>(x) <span class="o">-&gt;</span> x <span class="o">*</span> <span class="m">2</span> <span class="k">end</span>)</code></p>
 <p>Parentheses around the arguments of a named function are optional:</p>
 <p><code><span class="no">Enum</span><span class="o">.</span>map [<span class="m">1</span>, <span class="m">2</span>, <span class="m">3</span>], <span class="k">fn</span>(x) <span class="o">-&gt;</span> x <span class="o">*</span> <span class="m">2</span> <span class="k">end</span></code></p>
 <p>
-	In the above function call <code><span class="no">Enum</span></code> indicates the name of the module, <code>map</code> is the
-	function we want to call inside that module. The number of parameters in a function is referred as the
-	arity of the function, and it's usual to refer to functions as <code><span class="no">Enum</span><span class="o">.</span>map/<span class="m">2</span></code> . This means that
-	<code><span class="no">Enum</span><span class="o">.</span>map</code> has an arity of 2.
+In the above function call <code><span class="no">Enum</span></code> indicates the name of the module, <code>map</code> is the
+function we want to call inside that module. The number of parameters in a function is referred as the
+arity of the function, and it's usual to refer to functions as <code><span class="no">Enum</span><span class="o">.</span>map/<span class="m">2</span></code> . This means that
+<code><span class="no">Enum</span><span class="o">.</span>map</code> has an arity of 2.
 </p>
 <p>Anonymous functions also accept various clauses and guards:</p>
 <pre>
