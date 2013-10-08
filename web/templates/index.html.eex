@@ -17,7 +17,7 @@
           <li><a href="https://github.com/tryelixir/tryelixir.org" target="_blank">Source</a></li>
         </ul>
         <img class="pull-left" src="static/drop.png" width="48" height="48">
-        <h2>Try Elixir</h2>
+        <h1>Try Elixir</h1>
       </div>
 
       <hr>
