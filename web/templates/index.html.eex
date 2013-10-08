@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <title>Try Elixir</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="static/css/syntax.css">
     <link rel="shortcut icon" href="/static/drop.png">
   </head>
 

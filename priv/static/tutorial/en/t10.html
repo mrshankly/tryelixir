@@ -1,41 +1,47 @@
 <h3>Modules</h3>
+<div class="highlight">
 <p>
 It's possible to group several functions into a module, all we have to do
 is call the <code>defmodule</code> function and use <code>def</code> to define
 our functions.
 </p>
-<pre>
-defmodule Math do
-  def sum(a, b) do
-    a + b
-  end
 
-  def square(x) do
-    x * x
-  end
-end
+<pre>
+<span class="k">defmodule</span> <span class="no">Math</span> <span class="k">do</span>
+  <span class="k">def</span> sum(a, b) <span class="k">do</span>
+    a <span class="o">+</span> b
+  <span class="k">end</span>
+
+  <span class="k">def</span> square(x) <span class="k">do</span>
+    x <span class="o">*</span> x
+  <span class="k">end</span>
+<span class="k">end</span>
 </pre>
-<p>Now try to invoke <code>Math.sum(3, 6)</code> and <code>Math.square(3)</code>.</p>
+
+<p>Now try to invoke <code><span class="no">Math</span><span class="o">.</span>sum(<span class="m">3</span>, <span class="m">6</span>)</code> and <code><span class="no">Math</span><span class="o">.</span>square(<span class="m">3</span>)</code> .</p>
 <p>
 Inside a module we can define named functions with <code>def</code> and private
-functions with <code>defp</code>. A named function is available to be invoked
+functions with <code>defp</code> . A named function is available to be invoked
 from other modules, a private function can only be invoked locally.
 </p>
-<pre>
-defmodule PrivateMath do
-  def sum(a, b) do
-    do_sum(a, b)
-  end
 
-  defp do_sum(a, b) do
-    a + b
-  end
-end
+<pre>
+<span class="k">defmodule</span> <span class="no">PrivateMath</span> <span class="k">do</span>
+  <span class="k">def</span> sum(a, b) <span class="k">do</span>
+    do_sum(a, b)
+  <span class="k">end</span>
+
+  <span class="k">defp</span> do_sum(a, b) <span class="k">do</span>
+    a <span class="o">+</span> b
+  <span class="k">end</span>
+<span class="k">end</span>
 </pre>
-<p>
-Try to call <code>PrivateMath.sum(1, 2)</code>. As expected the result is <code>3</code>.
-Now try <code>PrivateMath.do_sum(1, 2)</code>. We get <code>UndefinedFunctionError</code>,
-this is because <code>do_sum/2</code> is a private function and call only be called
-inside the <code>PrivateMath</code> module.
+
+<p>Try to call <code><span class="no">PrivateMath</span><span class="o">.</span>sum(<span class="m">1</span>, <span class="m">2</span>)</code> . As expected the result is <code><span class="m">3</span></code> .</p>
+<p>Now try <code><span class="no">PrivateMath</span><span class="o">.</span>do_sum(<span class="m">1</span>, <span class="m">2</span>)</code> .</p>
+<p>We get <code><span class="gr">** (UndefinedFunctionError) undefined function: PrivateMath.do_sum/2</span></code> ,
+this is because <code>do_sum/<span class="m">2</span></code> is a private function and call only be called
+inside the <code><span class="no">PrivateMath</span></code> module.
 </p>
-<p>When you're ready to jump to the next step on the tutorial type <code>:ok</code> .</p>
+<p>When you're ready to jump to the next step on the tutorial type <code><span class="ss">:ok</span></code> .</p>
+</div>

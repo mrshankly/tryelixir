@@ -1,10 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
     <title>Try Elixir</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="static/css/syntax.css">
     <link rel="shortcut icon" href="/static/drop.png">
   </head>
 
@@ -18,7 +19,7 @@
           <li><a href="https://github.com/tryelixir/tryelixir.org" target="_blank">Source</a></li>
         </ul>
         <img class="pull-left" src="static/drop.png" width="48" height="48">
-        <h2>Try Elixir</h2>
+        <h1>Try Elixir</h1>
       </div>
 
       <hr>

@@ -4,34 +4,34 @@ It's possible to group several functions into a module, all we have to do
 is call the <code>defmodule</code> function and use <code>def</code> to define
 our functions.
 </p>
-<pre>
-defmodule Math do
-  def sum(a, b) do
-    a + b
+<div class="highlight"><pre>
+<span class="k">defmodule</span> <span class="no">Math</span> <span class="k">do</span>
+  <span class="k">def</span> sum(a, b) <span class="k">do</span>
+    a <span class="o">+</span> b
   end
 
-  def square(x) do
-    x * x
-  end
-end
-</pre>
+  <span class="k">def</span> square(x) <span class="k">do</span>
+    x <span class="o">*</span> x
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
 <p>Now try to invoke <code>Math.sum(3, 6)</code> and <code>Math.square(3)</code>.</p>
 <p>
 Inside a module we can define named functions with <code>def</code> and private
 functions with <code>defp</code>. A named function is available to be invoked
 from other modules, a private function can only be invoked locally.
 </p>
-<pre>
-defmodule PrivateMath do
-  def sum(a, b) do
+<div class="highlight"><pre>
+<span class="k">defmodule</span> <span class="no">PrivateMath</span> <span class="k">do</span>
+  <span class="k">def</span> sum(a, b) <span class="k">do</span>
     do_sum(a, b)
-  end
+  <span class="k">end</span>
 
-  defp do_sum(a, b) do
-    a + b
-  end
-end
-</pre>
+  <span class="k">defp</span> do_sum(a, b) <span class="k">do</span>
+    a <span class="o">+</span> b
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
 <p>
 Try to call <code>PrivateMath.sum(1, 2)</code>. As expected the result is <code>3</code>.
 Now try <code>PrivateMath.do_sum(1, 2)</code>. We get <code>UndefinedFunctionError</code>,

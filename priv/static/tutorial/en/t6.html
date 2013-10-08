@@ -5,19 +5,21 @@
     as a list of integers, because of this we refer to them as char lists.
 </p>
 <p>To confirm what I've just said, try the following:</p>
-<p><code>is_binary "hello"</code></p>
-<p><code>is_list 'hello'</code></p>
-<p><code>"hello" == 'hello'</code></p>
+<div class="highlight">
+<p><code>is_binary <span class="s2">"hello"</span></code></p>
+<p><code>is_list <span class="s1">'hello'</span></code></p>
+<p><code><span class="s2">"hello"</span> <span class="o">==</span> <span class="s1">'hello'</span></code></p>
 <p>
-    Strings are all encoded in UTF-8, you can type <code>"héllò"</code> and see for yourself.
+    Strings are all encoded in UTF-8, you can type <code><span class="s2">"héllò"</span></code> and see for yourself.
 </p>
 <p>
-    We can get the ASCII integer of a letter with the <code>?</code> operator, <code>?a</code> will return
-    <code>97</code> .
+    We can get the ASCII integer of a letter with the <code><span class="o">?</span></code> operator, <code><span class="sx">?a</span></code> will return
+    <code><span class="m">97</span></code> .
 </p>
 <p>This means we can also write:</p>
-<p><code>[?a, ?b, ?c]</code></p>
+<p><code>[<span class="sx">?a</span>, <span class="sx">?b</span>, <span class="sx">?c</span>]</code></p>
 <p>
     Elixir detects that all characters in the list are printable and returns the quoted representation. Adding
-    a non-printable character will print a normal list. Try to write <code>[?a, ?b, ?c, 1]</code> .
+    a non-printable character will print a normal list. Try to write <code>[<span class="sx">?a</span>, <span class="sx">?b</span>, <span class="sx">?c</span>, <span class="m">1</span>]</code> .
 </p>
+</div>
