@@ -40,7 +40,8 @@ defmodule Tryelixir.Eval do
     :is_number, :is_tuple, :length, :list_to_atom, :list_to_bitstring,
     :list_to_float, :list_to_integer, :list_to_tuple, :max, :min, :not, :round, :size,
     :term_to_binary, :throw, :tl, :trunc, :tuple_size, :tuple_to_list, :fn, :->, :&,
-    :__block__, :"{}", :"<<>>", :::, :lc, :inlist, :bc, :inbits, :^, :when, :|]
+    :__block__, :"{}", :"<<>>", :::, :lc, :inlist, :bc, :inbits, :^, :when, :|,
+    :defmodule, :def, :__aliases__]
 
   defrecord Config, counter: 1, binding: [], cache: '', result: nil, scope: nil
 
@@ -108,7 +109,7 @@ defmodule Tryelixir.Eval do
     code = code_so_far ++ latest_input
     case :elixir_translator.forms(code, line_no, "iex", []) do
       { :ok, forms } ->
-        if is_safe? forms do
+        if is_safe?(forms, config) do
           {result, new_binding, scope} =
             :elixir.eval_forms(forms, config.binding, config.scope)
 
@@ -133,61 +134,75 @@ defmodule Tryelixir.Eval do
   # true otherwise.
   #
   # check modules
-  defp is_safe?({{:., _, [module, fun]}, _, args}) do
+  defp is_safe?({{:., _, [module, fun]}, _, args}, config) do
     module = Macro.expand(module, __ENV__)
     case HashDict.get(@allowed_non_local, module) do
       :all ->
-        is_safe?(args)
+        is_safe?(args, config)
       lst when is_list(lst) ->
-        (fun in lst) and is_safe?(args)
+        (fun in lst) and is_safe?(args, config)
       _ ->
-        false
+        if module in elem(config.scope, 15) do
+          is_safe?(args, config)
+        else
+          false
+        end
     end
   end
 
   # check calls to anonymous functions, eg. f.()
-  defp is_safe?({{:., _, f_args}, _, args}) do
-    is_safe?(f_args) and is_safe?(args)
+  defp is_safe?({{:., _, f_args}, _, args}, config) do
+    is_safe?(f_args, config) and is_safe?(args, config)
   end
 
   # used with :fn
-  defp is_safe?([do: args]) do
-    is_safe?(args)
+  defp is_safe?([do: args], config) do
+    is_safe?(args, config)
   end
 
   # used with :'->'
-  defp is_safe?({left, _, right}) when is_list(left) do
-    is_safe?(left) and is_safe?(right)
+  defp is_safe?({left, _, right}, config) when is_list(left) do
+    is_safe?(left, config) and is_safe?(right, config)
   end
 
   # limit range size
-  defp is_safe?({:.., _, [begin, last]}) do
+  defp is_safe?({:.., _, [begin, last]}, _) do
     (last - begin) <= 100 and last < 1000
   end
 
   # don't size and unit in :::
-  defp is_safe?({:::, _, [_, opts]}) do
+  defp is_safe?({:::, _, [_, opts]}, _) do
     do_opts(opts)
   end
 
+  # check functions defined with Kernel.def/2
+  defp is_safe?({:def, _, [header, args]}, config) do
+    case header do
+      {:when, _, [_|rest]} ->
+        is_safe?(rest, config) and is_safe?(args, config)
+      _ ->
+        is_safe?(args, config)
+    end
+  end
+
   # check 0 arity local functions
-  defp is_safe?({dot, _, nil}) when is_atom(dot) do
+  defp is_safe?({dot, _, nil}, _) when is_atom(dot) do
     not dot in @restricted_local
   end
 
-  defp is_safe?({dot, _, args}) when args != nil do
-    (dot in @allowed_local) and is_safe?(args)
+  defp is_safe?({dot, _, args}, config) when args != nil do
+    (dot in @allowed_local) and is_safe?(args, config)
   end
 
-  defp is_safe?(lst) when is_list(lst) do
+  defp is_safe?(lst, config) when is_list(lst) do
     if length(lst) <= 100 do
-      Enum.all?(lst, fn(x) -> is_safe?(x) end)
+      Enum.all?(lst, fn(x) -> is_safe?(x, config) end)
     else
       false
     end
   end
 
-  defp is_safe?(_) do
+  defp is_safe?(_, _) do
     true
   end
 

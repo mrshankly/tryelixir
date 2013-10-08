@@ -12,7 +12,7 @@ defmodule TryelixirTest do
   end
 
   test "allowed module" do
-    assert {_, {"ok", [2,4,6]}} = test_eval("Enum.map([1,2,3], &1 * 2)")
+    assert {_, {"ok", [2,4,6]}} = test_eval("Enum.map([1,2,3], fn(x) -> x * 2 end)")
   end
 
   test "allowed module with fn" do
@@ -49,8 +49,28 @@ defmodule TryelixirTest do
            = test_eval("ls")
   end
 
-  test "Kernel access" do
+  test "kernel access" do
     test_eval("foo = [a: 1, b: 2, c: 3]")
     assert {_, {"ok", 2}} = test_eval("foo[:b]")
+  end
+
+  test "user defined module" do
+    Enum.each(["defmodule Test do",
+               "  def square(x) when is_integer(x) do",
+               "    x * x",
+               "  end",
+               "end"], &test_eval/1)
+
+    assert {_, {"ok", 25}} = test_eval("Test.square(5)")
+  end
+
+  test "restricted user defined module" do
+    Enum.each(["defmodule Rtest do",
+               "  def rspawn(fun) do",
+               "    spawn(fun)",
+               "  end",
+               "end"], &test_eval/1)
+
+    assert {_, {"error", @restricted}} = test_eval("Rtest.rspawn(fn -> Enum.map(1..10, fn(x) -> x end) end)")
   end
 end
