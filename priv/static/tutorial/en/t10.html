@@ -40,7 +40,7 @@ from other modules, a private function can only be invoked locally.
 <p>Try to call <code><span class="no">PrivateMath</span><span class="o">.</span>sum(<span class="m">1</span>, <span class="m">2</span>)</code> . As expected the result is <code><span class="m">3</span></code> .</p>
 <p>Now try <code><span class="no">PrivateMath</span><span class="o">.</span>do_sum(<span class="m">1</span>, <span class="m">2</span>)</code> .</p>
 <p>We get <code><span class="gr">** (UndefinedFunctionError) undefined function: PrivateMath.do_sum/2</span></code> ,
-this is because <code>do_sum/<span class="m">2</span></code> is a private function and call only be called
+this is because <code>do_sum/<span class="m">2</span></code> is a private function and can only be called
 inside the <code><span class="no">PrivateMath</span></code> module.
 </p>
 <p>When you're ready to jump to the next step on the tutorial type <code><span class="ss">:ok</span></code> .</p>
