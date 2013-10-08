@@ -21,4 +21,8 @@ If you wish to translate Try Elixir, please follow the [Translation Guide](https
 
 ## License
 
-All files under this repository fall under the MIT License (see the file LICENSE). "Elixir" and the Elixir logo are copyright (c) 2012 Plataformatec.
+* Tryelixir source code is released under the MIT License, see [LICENSE](https://github.com/tryelixir/tryelixir/blob/master/LICENSE) for more details.
+
+* The Elixir logo is copyrighted to [Plataformatec](http://plataformatec.com.br/).
+
+* The `syntax.css` file is copyrighted to [AlienWp](http://alienwp.com/) under [GPL license, version 2](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html).
