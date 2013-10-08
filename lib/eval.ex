@@ -41,7 +41,7 @@ defmodule Tryelixir.Eval do
     :list_to_float, :list_to_integer, :list_to_tuple, :max, :min, :not, :round, :size,
     :term_to_binary, :throw, :tl, :trunc, :tuple_size, :tuple_to_list, :fn, :->, :&,
     :__block__, :"{}", :"<<>>", :::, :lc, :inlist, :bc, :inbits, :^, :when, :|,
-    :defmodule, :def, :__aliases__]
+    :defmodule, :def, :defp, :__aliases__]
 
   defrecord Config, counter: 1, binding: [], cache: '', result: nil, scope: nil
 
@@ -109,6 +109,7 @@ defmodule Tryelixir.Eval do
     code = code_so_far ++ latest_input
     case :elixir_translator.forms(code, line_no, "iex", []) do
       { :ok, forms } ->
+        IO.inspect forms
         if is_safe?(forms, config) do
           {result, new_binding, scope} =
             :elixir.eval_forms(forms, config.binding, config.scope)
@@ -176,7 +177,7 @@ defmodule Tryelixir.Eval do
   end
 
   # check functions defined with Kernel.def/2
-  defp is_safe?({:def, _, [header, args]}, config) do
+  defp is_safe?({fun, _, [header, args]}, config) when fun == :def or fun == :defp do
     case header do
       {:when, _, [_|rest]} ->
         is_safe?(rest, config) and is_safe?(args, config)
