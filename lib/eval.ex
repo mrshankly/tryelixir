@@ -54,8 +54,7 @@ defmodule Tryelixir.Eval do
     * trap exceptions in the code being evaluated
   """
   def start do
-    scope = IEx.boot_config([]).scope
-    scope = :elixir.scope_for_eval(scope, delegate_locals_to: nil)
+    scope = :elixir.scope_for_eval(file: "iex", delegate_locals_to: nil)
     spawn(fn -> eval_loop(Config.new(scope: scope)) end)
   end
 

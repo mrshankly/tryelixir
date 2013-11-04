@@ -20,7 +20,7 @@ defmodule ApiRouter do
             :error ->
               start_eval(conn)
             cookie ->
-              pid = String.to_char_list!(cookie) |> list_to_pid
+              pid = String.to_char_list!(cookie) |> :erlang.list_to_pid
               unless Process.alive? pid do
                 start_eval(conn)
               else
@@ -43,7 +43,7 @@ defmodule ApiRouter do
   end
 
   defp put_cookie(pid, conn) do
-    cookie = pid_to_list(pid) |> Tryelixir.Cookie.encode
+    cookie = :erlang.pid_to_list(pid) |> Tryelixir.Cookie.encode
     Dynamo.HTTP.Cookies.put_cookie(conn, :eval_pid, cookie)
   end
 
