@@ -16,6 +16,7 @@ defmodule Tryelixir.Eval do
     {Set,          :all},
     {Stream,       :all},
     {String,       :all},
+    {Integer,      :all},
     {Binary.Chars, [:to_binary]}, # string interpolation
     {Kernel,       [:access]},
     {System,       [:version]},
