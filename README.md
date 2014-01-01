@@ -1,4 +1,4 @@
-# [Try Elixir](http://tryelixir.org/)
+# Try Elixir
 
 [![Build Status](https://travis-ci.org/tryelixir/tryelixir.png?branch=master)](https://travis-ci.org/tryelixir/tryelixir)
 
