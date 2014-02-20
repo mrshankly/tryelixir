@@ -1,4 +1,4 @@
-Code.require_file "../../test_helper.exs", __FILE__
+Code.require_file "../../test_helper.exs", __ENV__.file
 
 # Feature tests goes through the Dynamo.under_test
 # and are meant to test the full stack.

@@ -29,7 +29,7 @@ defmodule ApiRouter do
           end
       end
 
-    eval_pid <- {self, {:input, conn.params[:code]}}
+    send(eval_pid, {self, {:input, conn.params[:code]}})
     resp = receive do
       response ->
         response
@@ -54,17 +54,17 @@ defmodule ApiRouter do
   end
 
   defp format_json({prompt, nil}) do
-    %s/{"prompt":"#{prompt}"}/
+    ~s/{"prompt":"#{prompt}"}/
   end
 
   defp format_json({prompt, {"error", result}}) do
-    result = Inspect.BitString.escape result, ?"
-    %s/{"prompt":"#{prompt}","type":"error","result":"#{result}"}/
+    result = Inspect.BitString.escape(result, ?")
+    ~s/{"prompt":"#{prompt}","type":"error","result":"#{result}"}/
   end
 
   defp format_json({prompt, {type, result}}) do
     # show double-quotes in strings
-    result = Inspect.BitString.escape inspect(result), ?"
-    %s/{"prompt":"#{prompt}","type":"#{type}","result":"#{result}"}/
+    result = Inspect.BitString.escape(inspect(result), ?")
+    ~s/{"prompt":"#{prompt}","type":"#{type}","result":"#{result}"}/
   end
 end

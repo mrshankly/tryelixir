@@ -44,7 +44,8 @@ defmodule Tryelixir.Eval do
     :__block__, :"{}", :"<<>>", :::, :lc, :inlist, :bc, :inbits, :^, :when, :|,
     :defmodule, :def, :defp, :__aliases__]
 
-  defrecord Config, counter: 1, binding: [], cache: '', result: nil, scope: nil
+  defrecord Config, counter: 1, binding: [], cache: '', scope: nil, env: nil,
+    result: nil
 
   @doc """
   Starts a new process of eval_loop. It does the following:
@@ -54,33 +55,31 @@ defmodule Tryelixir.Eval do
     * trap exceptions in the code being evaluated
   """
   def start do
-    scope = :elixir.scope_for_eval(file: "iex", delegate_locals_to: nil)
-    spawn(fn -> eval_loop(Config.new(scope: scope)) end)
+    env    = :elixir.env_for_eval(file: "iex", delegate_locals_to: nil)
+    scope  = :elixir_env.env_to_scope(env)
+    config = Config[scope: scope, env: env]
+    spawn(fn -> eval_loop(config) end)
   end
 
   defp eval_loop(config) do
     receive do
       {from, {:input, line}} ->
-        unless line == :eof do
-          new_config =
-            try do
-              counter = config.counter
-              code    = config.cache
-              eval(code, :unicode.characters_to_list(line), counter, config)
-            rescue
-              exception ->
-                config = config.cache('')
-                config.result({"error", format_exception(exception)})
-            catch
-              kind, error ->
-                config = config.cache('')
-                config.result({"error", format_error(kind, error)})
-            end
-
-          prompt = new_prompt(new_config)
-          from <- {prompt, new_config.result}
-          eval_loop(new_config.result(nil))
+        new_config = try do
+          counter = config.counter
+          code    = config.cache
+          eval(code, :unicode.characters_to_list(line), counter, config)
+        rescue
+          exception ->
+            config = config.cache('')
+            config.result({"error", format_exception(exception)})
+        catch
+          kind, error ->
+            config = config.cache('')
+            config.result({"error", format_error(kind, error)})
         end
+        prompt = new_prompt(new_config)
+        send(from, {prompt, new_config.result})
+        eval_loop(new_config.result(nil))
       :exit ->
         :ok
     after
@@ -105,27 +104,28 @@ defmodule Tryelixir.Eval do
   # to re-raise it.
   #
   # Returns updated config.
-  defp eval(code_so_far, latest_input, line_no, config) do
+  defp eval(code_so_far, latest_input, line, config) do
     code = code_so_far ++ latest_input
-    case :elixir_translator.forms(code, line_no, "iex", []) do
+    case Code.string_to_quoted(code, [line: line, file: "iex"]) do
       { :ok, forms } ->
-        if is_safe?(forms, [], config) do
-          {result, new_binding, scope} =
-            :elixir.eval_forms(forms, config.binding, config.scope)
-
-          config.counter(line_no + 1).cache('').binding(new_binding).result({"ok", result}).scope(scope)
-        else
+        unless is_safe?(forms, [], config) do
           raise "restricted"
         end
 
-      { :error, { line_no, error, token } } ->
+        {result, new_binding, env, scope} =
+          :elixir.eval_forms(forms, config.binding, config.env, config.scope)
+
+        config = config.counter(line + 1).cache('').binding(new_binding)
+        config.result({"ok", result}).scope(scope).env(env)
+
+      { :error, { line, error, token } } ->
         if token == [] do
           # Update config.cache in order to keep adding new input to
           # the unfinished expression in `code`
           config.cache(code ++ '\n')
         else
           # Encountered malformed expression
-          :elixir_errors.parse_error(line_no, "iex", error, token)
+          :elixir_errors.parse_error(line, "iex", error, token)
         end
     end
   end
@@ -142,7 +142,7 @@ defmodule Tryelixir.Eval do
       lst when is_list(lst) ->
         (fun in lst) and is_safe?(args, funl, config)
       _ ->
-        if module in elem(config.scope, 15) do
+        if module in elem(config.env, 11) do
           is_safe?(args, funl, config)
         else
           false
@@ -218,6 +218,7 @@ defmodule Tryelixir.Eval do
       _ -> true
     end
   end
+
   defp do_opts([h|t]) do
     case h do
       {:size, _, _} -> false
@@ -225,21 +226,35 @@ defmodule Tryelixir.Eval do
       _ -> do_opts(t)
     end
   end
+
   defp do_opts([]), do: true
 
   # gets the list of defined functions (non-private and private) in a module
-  defp get_mod_funs([_, do: {_,_,funs}]) do
+  defp get_mod_funs([_, [do: {:__block__, _, funs}]]) do
     get_funs(funs, [])
   end
 
+  defp get_mod_funs([_, [do: fun]]) do
+    get_funs([fun], [])
+  end
+
+  defp get_mod_funs(_other) do
+    false
+  end
+
   defp get_funs([], funs), do: funs
+
   defp get_funs([{d, _, args} | t], acc) when d == :def or d == :defp do
     case args do
-      [{:when, _, [{fun,_,_}|_]}|_] -> get_funs(t, [fun | acc])
-      [{fun,_,_}|_] -> get_funs(t, [fun | acc])
-      _ -> get_funs(t, acc)
+      [{:when, _, [{fun, _, _} | _]} | _] ->
+        get_funs(t, [fun | acc])
+      [{fun, _, _} | _] ->
+        get_funs(t, [fun | acc])
+      _ ->
+        get_funs(t, acc)
     end
   end
+
   defp get_funs([_ | t], acc), do: get_funs(t, acc)
 
   defp format_exception(exception) do

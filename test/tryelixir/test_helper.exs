@@ -11,18 +11,16 @@ defmodule Tryelixir.Case do
   end
 
   def start_eval() do
-    Tryelixir.Eval.start
-    |> Process.register(:test_eval)
+    Tryelixir.Eval.start |> Process.register(:test_eval)
   end
 
   @doc """
   Sends the input to a eval_loop process and returns the response.
   """
   def test_eval(input) do
-    :test_eval <- {self, {:input, input}}
+    send(:test_eval, {self, {:input, input}})
     receive do
-      response ->
-        response
+      response -> response
     end
   end
 end
