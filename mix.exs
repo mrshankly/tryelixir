@@ -18,7 +18,7 @@ defmodule Tryelixir.Mixfile do
   end
 
   defp deps do
-    [ { :cowboy, github: "extend/cowboy" },
-      { :dynamo, github: "elixir-lang/dynamo" } ]
+    [ { :cowboy, git: "git://github.com/extend/cowboy.git" },
+      { :dynamo, git: "git://github.com/dynamo/dynamo.git" } ]
   end
 end
