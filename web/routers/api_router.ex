@@ -9,6 +9,10 @@ defmodule ApiRouter do
     conn.resp(200, System.version)
   end
 
+  get "/*" do
+    conn.resp(404, "404")
+  end
+
   post "/eval" do
     {eval_pid, conn} =
       case Dynamo.HTTP.Cookies.get_cookie(conn, :eval_pid) do
@@ -42,6 +46,11 @@ defmodule ApiRouter do
     conn.resp(200, format_json(resp))
   end
 
+  post "/*" do
+    conn.resp(404, "404")
+  end
+
+  # Helpers.
   defp put_cookie(pid, conn) do
     cookie = :erlang.pid_to_list(pid) |> Tryelixir.Cookie.encode
     Dynamo.HTTP.Cookies.put_cookie(conn, :eval_pid, cookie)
