@@ -20,6 +20,11 @@ defmodule Tryelixir.Repl do
     Supervisor.start_child(__MODULE__, [])
   end
 
+  @doc """
+  Evaluate the given `input` on the REPL server `pid`.
+  """
+  defdelegate eval(pid, input), to: Tryelixir.Repl.Server
+
   # Supervisor callbacks.
 
   def init([]) do
