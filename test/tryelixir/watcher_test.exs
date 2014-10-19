@@ -1,42 +1,47 @@
 defmodule Tryelixir.WatcherTest do
   use ExUnit.Case, async: true
 
-  test "watcher spawn" do
-    pid = 1
-    Tryelixir.Watcher.add(pid)
-    assert elem(Tryelixir.Watcher.spawn(pid, fn -> :ok end), 0) == :ok
-  end
+  import Tryelixir.Watcher, only: [spawn: 2, spawn: 4]
 
-  test "watcher spawn limit" do
-    pid = 1
-    max = Tryelixir.Watcher.max()
+  setup do
     long_fn = fn ->
       receive do
         _ -> :ok
       end
     end
+    short_fn = fn -> :ok end
+    max = Tryelixir.Watcher.max
 
-    Tryelixir.Watcher.add(pid)
-    Enum.each(1..max, fn(_) -> Tryelixir.Watcher.spawn(pid, long_fn) end)
-
-    assert Tryelixir.Watcher.spawn(pid, long_fn) == {:error, :limit}
+    {:ok, [max: max, long_fn: long_fn, short_fn: short_fn]}
   end
 
-  test "watcher clean spawn limit" do
-    pid = 1
-    max = Tryelixir.Watcher.max()
-    long_fn = fn ->
-      receive do
-        _ -> :ok
-      end
-    end
+  test "spawn/1", %{short_fn: f} do
+    Tryelixir.Watcher.add(1)
+    assert elem(spawn(1, f), 0) == :ok
+  end
 
-    Tryelixir.Watcher.add(pid)
-    ps = Enum.map(1..max, fn(_) -> Tryelixir.Watcher.spawn(pid, long_fn) end)
-    Enum.each(ps, fn({:ok, p}) -> send(p, :stop) end) # stop all processes
+  test "spawn/3", _context do
+    Tryelixir.Watcher.add(2)
+    assert elem(spawn(2, Kernel, :+, [1, 1]), 0) == :ok
+  end
 
-    :timer.sleep(50) # waits for tables to be cleaned
+  test "spawn limit", %{max: max, long_fn: f} do
+    Tryelixir.Watcher.add(3)
 
-    assert elem(Tryelixir.Watcher.spawn(pid, fn -> :ok end), 0) == :ok
+    Enum.each(1..max, fn(_) ->
+      assert elem(spawn(3, f), 0) == :ok
+    end)
+    assert spawn(3, f) == {:error, :limit}
+  end
+
+  test "free after limit", %{max: max, long_fn: lf, short_fn: sf} do
+    Tryelixir.Watcher.add(4)
+
+    Enum.map(1..max, fn(_) -> spawn(4, lf) end)
+    |> Enum.each(fn({:ok, p}) -> send(p, :stop) end)
+
+    :timer.sleep(100) # waits for tables
+
+    assert elem(spawn(4, sf), 0) == :ok
   end
 end
