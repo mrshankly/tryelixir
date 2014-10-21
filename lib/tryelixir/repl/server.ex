@@ -5,7 +5,8 @@ defmodule Tryelixir.Repl.Config do
             cache: '',
             counter: 1,
             env: nil,
-            scope: nil
+            scope: nil,
+            mod_locals: []
 
   @type t :: %__MODULE__{}
 end
