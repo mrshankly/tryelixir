@@ -16,6 +16,6 @@ defmodule Tryelixir.Repl.Locals do
 
   defp check_spawn({:ok, pid}), do: pid
   defp check_spawn({:error, :limit}) do
-    raise PermissionError, description: "process limit reached"
+    raise Tryelixir.PermissionError, "process limit reached"
   end
 end

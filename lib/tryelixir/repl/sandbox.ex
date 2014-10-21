@@ -1,10 +1,9 @@
-defmodule PermissionError do
-  defexception file: nil, line: nil, description: "restricted code"
+defmodule Tryelixir.PermissionError do
+  defexception message: "restricted code"
 
-  @spec message(Exception.t) :: String.t
-  def message(exception) do
-    file = Exception.format_file_line(exception.file, exception.line)
-    "#{file} #{exception.description}"
+  @spec exception(String.t) :: Exception.t
+  def exception(msg) when is_binary(msg) do
+    %Tryelixir.PermissionError{message: msg}
   end
 end
 
