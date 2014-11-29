@@ -104,22 +104,6 @@ defmodule Tryelixir.Repl.Sandbox do
     :elixir_errors.parse_error(line, "iex", error, token)
   end
 
-  defp format_result(result) do
-    inspect(result, [width: 80, pretty: true])
-  end
-
-  defp format_fn(f, a) when is_list(a), do: "#{f}/#{length(a)}"
-  defp format_fn(f, nil), do: "#{f}/0"
-  defp format_fn(f, a), do: "#{f}/#{a}"
-
-  defp format_fn(m, f, a) when is_list(a), do: Exception.format_mfa(m, f, length(a))
-  defp format_fn(m, f, nil), do: Exception.format_mfa(m, f, 0)
-  defp format_fn(m, f, a), do: Exception.format_mfa(m, f, a)
-
-  defp format_err(kind, error) do
-    Exception.format_banner(kind, error)
-  end
-
   # safe!/2, this function parses the AST and checks for anything that is not
   # allowed to run. Returns a new config. If anything is not ok, an error is
   # raised.
@@ -243,7 +227,7 @@ defmodule Tryelixir.Repl.Sandbox do
     config
   end
 
-  # Helpers for safe!/2
+  # Helpers
 
   # Returns true if the given module is already defined and is not a user
   # defined module, false otherwise.
@@ -326,4 +310,37 @@ defmodule Tryelixir.Repl.Sandbox do
   defp do_bigger([], acc) when acc <= 100, do: false
   defp do_bigger(_l, 101), do: true
   defp do_bigger([_|xs], acc), do: do_bigger(xs, acc+1)
+
+  # Format helpers. Makes results, functions and errors pretty.
+  defp format_result(result) do
+    inspect(result, [width: 80, pretty: true])
+  end
+
+  defp format_fn(function, args) when is_list(args) do
+    "#{function}/#{length(args)}"
+  end
+
+  defp format_fn(function, nil) do
+    "#{function}/0"
+  end
+
+  defp format_fn(function, arity) do
+    "#{function}/#{arity}"
+  end
+
+  defp format_fn(module, function, args) when is_list(args) do
+    Exception.format_mfa(module, function, length(args))
+  end
+
+  defp format_fn(module, function, nil) do
+    Exception.format_mfa(module, function, 0)
+  end
+
+  defp format_fn(module, function, arity) do
+    Exception.format_mfa(module, function, arity)
+  end
+
+  defp format_err(kind, error) do
+    Exception.format_banner(kind, error)
+  end
 end
