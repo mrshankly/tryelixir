@@ -22,5 +22,3 @@ If you wish to translate Try Elixir, please follow the [Translation Guide](https
 ## License
 
 * Tryelixir source code is released under the MIT License, see [LICENSE](https://github.com/tryelixir/tryelixir/blob/master/LICENSE) for more details.
-
-* The Elixir logo is copyrighted to [Plataformatec](http://plataformatec.com.br/).
