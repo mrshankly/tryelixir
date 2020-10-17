@@ -1,25 +1,26 @@
-defmodule Tryelixir.Mixfile do
+defmodule TryElixir.MixProject do
   use Mix.Project
 
   def project do
-    [ app: :tryelixir,
-      version: "0.0.1",
-      elixir: "~> 0.12.5-dev",
-      dynamos: [Tryelixir.Dynamo],
-      compilers: [:elixir, :dynamo, :app],
-      env: [prod: [compile_path: "ebin"]],
-      compile_path: "tmp/#{Mix.env}/tryelixir/ebin",
-      deps: deps ]
+    [
+      app: :try_elixir,
+      version: "0.1.0",
+      elixir: "~> 1.10",
+      start_permanent: Mix.env() == :prod,
+      deps: deps()
+    ]
   end
 
-  # Configuration for the OTP application
   def application do
-    [ applications: [:cowboy, :dynamo],
-      mod: { Tryelixir, [] } ]
+    [mod: {TryElixir, []}, extra_applications: [:logger]]
   end
 
   defp deps do
-    [ { :cowboy, git: "git://github.com/extend/cowboy.git" },
-      { :dynamo, git: "git://github.com/dynamo/dynamo.git" } ]
+    [
+      {:plug_cowboy, "~> 2.4"},
+      {:ex_doc, "~> 0.22", only: [:dev], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+      {:credo, "~> 1.4.1", only: [:dev, :test], runtime: false}
+    ]
   end
 end

@@ -1,4 +1,4 @@
-Code.require_file "test_helper.exs", __DIR__
+Code.require_file("test_helper.exs", __DIR__)
 
 defmodule TryelixirTest do
   use Tryelixir.Case
@@ -12,11 +12,11 @@ defmodule TryelixirTest do
   end
 
   test "allowed module" do
-    assert {_, {"ok", [2,4,6]}} = test_eval("Enum.map([1,2,3], fn(x) -> x * 2 end)")
+    assert {_, {"ok", [2, 4, 6]}} = test_eval("Enum.map([1,2,3], fn(x) -> x * 2 end)")
   end
 
   test "allowed module with fn" do
-    assert {_, {"ok", [2,3,4]}} = test_eval("Enum.map([1,2,3], fn(x) -> x + 1 end)")
+    assert {_, {"ok", [2, 3, 4]}} = test_eval("Enum.map([1,2,3], fn(x) -> x + 1 end)")
   end
 
   test "restricted module" do
@@ -45,8 +45,8 @@ defmodule TryelixirTest do
   end
 
   test "undefined local" do
-    assert {_, {"error", "** (CompileError) " <> _}}
-           = test_eval("ls")
+    assert {_, {"error", "** (CompileError) " <> _}} =
+             test_eval("ls")
   end
 
   test "kernel access" do
@@ -55,22 +55,21 @@ defmodule TryelixirTest do
   end
 
   test "user defined module" do
-    Enum.each(["defmodule Test do",
-               "  def square(x) when is_integer(x) do",
-               "    x * x",
-               "  end",
-               "end"], &test_eval/1)
+    Enum.each(
+      ["defmodule Test do", "  def square(x) when is_integer(x) do", "    x * x", "  end", "end"],
+      &test_eval/1
+    )
 
     assert {_, {"ok", 25}} = test_eval("Test.square(5)")
   end
 
   test "restricted user defined module" do
-    Enum.each(["defmodule Rtest do",
-               "  def rspawn(fun) do",
-               "    spawn(fun)",
-               "  end",
-               "end"], &test_eval/1)
+    Enum.each(
+      ["defmodule Rtest do", "  def rspawn(fun) do", "    spawn(fun)", "  end", "end"],
+      &test_eval/1
+    )
 
-    assert {_, {"error", @restricted}} = test_eval("Rtest.rspawn(fn -> Enum.map(1..10, fn(x) -> x end) end)")
+    assert {_, {"error", @restricted}} =
+             test_eval("Rtest.rspawn(fn -> Enum.map(1..10, fn(x) -> x end) end)")
   end
 end

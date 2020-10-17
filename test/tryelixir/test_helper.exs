@@ -1,4 +1,4 @@
-ExUnit.start
+ExUnit.start()
 
 defmodule Tryelixir.Case do
   @moduledoc false
@@ -11,7 +11,7 @@ defmodule Tryelixir.Case do
   end
 
   def start_eval() do
-    Tryelixir.Eval.start |> Process.register(:test_eval)
+    TryElixir.Eval.start() |> Process.register(:test_eval)
   end
 
   @doc """
@@ -19,6 +19,7 @@ defmodule Tryelixir.Case do
   """
   def test_eval(input) do
     send(:test_eval, {self, {:input, input}})
+
     receive do
       response -> response
     end

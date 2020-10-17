@@ -1,9 +1,11 @@
-defmodule Tryelixir.Eval do
+defmodule TryElixir.Eval do
   @moduledoc """
   Eval module for tryelixir, based on IEx.Server
   """
 
-  @allowed_non_local HashDict.new [
+  require Record
+
+  @allowed_non_local Keyword.new [
     {Bitwise,      :all},
     {Dict,         :all},
     {Enum,         :all},
@@ -44,7 +46,7 @@ defmodule Tryelixir.Eval do
     :__block__, :"{}", :"<<>>", :::, :lc, :inlist, :bc, :inbits, :^, :when, :|,
     :defmodule, :def, :defp, :__aliases__]
 
-  defrecord Config, counter: 1, binding: [], cache: '', scope: nil, env: nil,
+  Record.defrecord :config, counter: 1, binding: [], cache: '', scope: nil, env: nil,
     result: nil
 
   @doc """
@@ -57,7 +59,7 @@ defmodule Tryelixir.Eval do
   def start do
     env    = :elixir.env_for_eval(file: "iex", delegate_locals_to: nil)
     scope  = :elixir_env.env_to_scope(env)
-    config = Config[scope: scope, env: env]
+    config = config(scope: scope, env: env)
     spawn(fn -> eval_loop(config) end)
   end
 
@@ -136,7 +138,7 @@ defmodule Tryelixir.Eval do
   # check modules
   defp is_safe?({{:., _, [module, fun]}, _, args}, funl, config) do
     module = Macro.expand(module, __ENV__)
-    case HashDict.get(@allowed_non_local, module) do
+    case Keyword.get(@allowed_non_local, module) do
       :all ->
         is_safe?(args, funl, config)
       lst when is_list(lst) ->
