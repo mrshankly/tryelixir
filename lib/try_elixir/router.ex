@@ -5,6 +5,8 @@ defmodule TryElixir.Router do
   use Plug.ErrorHandler
   import Plug.Conn
 
+  require Logger
+
   @cookie_key "_tryelixir_session"
 
   plug(Plug.Static, at: "/static", from: :try_elixir)
@@ -16,6 +18,8 @@ defmodule TryElixir.Router do
     encryption_salt: Application.fetch_env!(:try_elixir, :encryption_salt),
     signing_salt: Application.fetch_env!(:try_elixir, :signing_salt)
   )
+
+  plug(Plug.Parsers, parsers: [:urlencoded], pass: ["application/*"], validate_utf8: true)
 
   plug(:match)
   plug(:dispatch)
@@ -41,14 +45,15 @@ defmodule TryElixir.Router do
     conn = fetch_session(conn)
     pid = get_session(conn, @cookie_key)
 
-    {conn, pid} = if not is_pid(pid) or not Process.alive?(pid) do
-      {:ok, pid} = TryElixir.Sandbox.start()
-      {put_session(conn, @cookie_key, pid), pid}
-    else
-      {conn, pid}
-    end
+    {conn, pid} =
+      if not is_pid(pid) or not Process.alive?(pid) do
+        {:ok, pid} = TryElixir.Sandbox.start()
+        {put_session(conn, @cookie_key, pid), pid}
+      else
+        {conn, pid}
+      end
 
-    code = "1"
+    code = Map.fetch!(conn.params, "code")
     response = TryElixir.Sandbox.eval(pid, code)
 
     send_resp(conn, 200, format_response(response))
@@ -58,20 +63,32 @@ defmodule TryElixir.Router do
     send_resp(conn, 404, "Not Found")
   end
 
-  def handle_errors(conn, %{kind: _kind, reason: _reason, stack: _stack}) do
-    # TODO log error
+  def handle_errors(conn, %{kind: kind, reason: reason}) do
+    Logger.error("Router error(#{kind}): #{reason}")
     send_resp(conn, conn.status, "Something went wrong")
   end
 
   defp format_response({:incomplete, line}) do
-    ~s/{"prompt": "...(#{line})> "}/
+    Jason.encode!(%{prompt: "...(#{line})> "})
   end
 
-  defp format_response({{:ok, result}, line}) do
-    ~s/{"prompt": "iex(#{line})> ", "type": "ok", "result": "#{result}"}/
+  defp format_response({{:ok, term}, line}) do
+    response = %{
+      type: "ok",
+      result: "#{inspect(term)}",
+      prompt: "iex(#{line})> "
+    }
+
+    Jason.encode!(response, escape: :javascript_safe)
   end
 
-  defp format_response({{:error, result}, line}) do
-    ~s/{"prompt": "iex(#{line})> ", "type": "error", "result": "#{result}"}/
+  defp format_response({{:error, error}, line}) do
+    response = %{
+      type: "ok",
+      result: "#{error}",
+      prompt: "iex(#{line})> "
+    }
+
+    Jason.encode!(response, escape: :javascript_safe)
   end
 end

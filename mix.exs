@@ -17,8 +17,8 @@ defmodule TryElixir.MixProject do
 
   defp deps do
     [
+      {:jason, "~> 1.2.2"},
       {:plug_cowboy, "~> 2.4"},
-      {:ex_doc, "~> 0.22", only: [:dev], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:credo, "~> 1.4.1", only: [:dev, :test], runtime: false}
     ]

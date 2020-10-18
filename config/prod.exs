@@ -1,10 +1,11 @@
 import Config
 
-config(:try_elixir,
+config :logger, level: :info
+
+config :try_elixir,
   secret_key_base: urandom(64),
   encryption_salt: urandom(32),
   signing_salt: urandom(32)
-)
 
 @block_size 512
 

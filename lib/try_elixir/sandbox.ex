@@ -5,6 +5,8 @@ defmodule TryElixir.Sandbox do
 
   use GenServer
 
+  require Logger
+
   @eval_timeout 3_000
   @init_timeout 30_000
   @idle_timeout 300_000
@@ -21,17 +23,22 @@ defmodule TryElixir.Sandbox do
 
   @spec eval(pid, String.t()) :: any
   def eval(pid, code) do
-    GenServer.call(pid, {:input, code}, @eval_timeout)
+    GenServer.call(pid, {:eval, code}, @eval_timeout)
   end
 
   @impl GenServer
   def init([]) do
     env = :elixir.env_for_eval(file: "iex", line: 1, delegate_locals_to: nil)
-    {:ok, %{binding: [], cache: '', counter: 1, env: env}, @init_timeout}
+    state = %{binding: [], cache: '', counter: 1, env: env}
+
+    Logger.debug("Sandbox process start")
+    {:ok, state, @init_timeout}
   end
 
   @impl GenServer
-  def handle_call({:input, input}, _from, state) do
+  def handle_call({:eval, input}, _from, state) do
+    Logger.debug("Sandbox eval input: #{inspect(input)}")
+
     {new_state, result} =
       try do
         code = state.cache ++ String.to_charlist(input)
@@ -47,12 +54,16 @@ defmodule TryElixir.Sandbox do
           {new_state, {:error, format_error(kind, reason)}}
       end
 
-    {:reply, {result, new_state.counter}, new_state, @idle_timeout}
+    reply = {result, new_state.counter}
+
+    Logger.debug("Sandbox eval reply: #{inspect(reply)}")
+    {:reply, reply, new_state, @idle_timeout}
   end
 
   @impl GenServer
-  def handle_info(:timeout, config) do
-    {:stop, :timeout, config}
+  def handle_info(:timeout, state) do
+    Logger.debug("Sandbox process timeout")
+    {:stop, :normal, state}
   end
 
   # Well-formed input, evaluate if safe.
