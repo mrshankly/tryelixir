@@ -25,11 +25,9 @@ defmodule TryElixir.Router do
   plug(:dispatch)
 
   get "/" do
-    {:ok, pid} = TryElixir.Sandbox.start()
-
     conn
     |> fetch_session()
-    |> put_session(@cookie_key, pid)
+    |> put_session(@cookie_key, nil)
     |> send_resp(200, TryElixir.Template.index())
   end
 

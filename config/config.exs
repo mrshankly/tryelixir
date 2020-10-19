@@ -13,6 +13,6 @@ config :try_elixir,
   encryption_salt: Base.decode64!("giU/Pibe2RVKaQkL6zv3neIYO5BoXLJOArqRloZQFXo="),
   signing_salt: Base.decode64!("NsUIk6yZmoBiQlUjcosoWiod1uJsr3MN+PpIlKUKbaE=")
 
-if Mix.env() == :prod do
-  import_config("prod.exs")
+if Mix.env() in [:prod, :test] do
+  import_config("#{Mix.env()}.exs")
 end

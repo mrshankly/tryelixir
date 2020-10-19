@@ -1,14 +1,13 @@
 defmodule TryElixir.Sandbox do
-  @moduledoc """
-  A sandboxed elixir interpreter.
-  """
+  @moduledoc false
 
   use GenServer
-
   require Logger
 
+  alias TryElixir.Sandbox.Checker
+
   @eval_timeout 3_000
-  @init_timeout 30_000
+  @init_timeout 60_000
   @idle_timeout 300_000
 
   @spec start :: {:ok, pid} | {:error, any}
@@ -68,7 +67,8 @@ defmodule TryElixir.Sandbox do
 
   # Well-formed input, evaluate if safe.
   defp eval({:ok, forms}, _code, state) do
-    {result, binding, env} = :elixir.eval_forms(forms, state.binding, state.env)
+    {result, binding, env} =
+      Checker.safe!(forms, state.env) |> :elixir.eval_forms(state.binding, state.env)
 
     new_state = %{
       binding: binding,
@@ -82,7 +82,7 @@ defmodule TryElixir.Sandbox do
 
   # Input is not complete, update the cache and wait for more input.
   defp eval({:error, {_line, _error, ""}}, code, state) do
-    {%{state | cache: code}, :incomplete}
+    {%{state | cache: code ++ '\n'}, :incomplete}
   end
 
   # Malformed input.

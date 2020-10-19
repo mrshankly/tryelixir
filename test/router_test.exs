@@ -10,10 +10,6 @@ defmodule RouterTest do
     Router.call(conn(:get, path), @opts)
   end
 
-  defp get(conn, path) do
-    Router.call(recycle_cookies(conn(:get, path), conn), @opts)
-  end
-
   defp post(path, params) do
     Router.call(conn(:post, path, params), @opts)
   end
@@ -22,13 +18,12 @@ defmodule RouterTest do
     Router.call(recycle_cookies(conn(:post, path, params), conn), @opts)
   end
 
-  test "root starts sandbox" do
+  test "root returns OK and clears session" do
     conn = Plug.Conn.fetch_session(get("/"))
     assert conn.status == 200
 
     sandbox = Plug.Conn.get_session(conn, "_tryelixir_session")
-    assert is_pid(sandbox)
-    assert Process.alive?(sandbox)
+    assert sandbox == nil
   end
 
   test "about returns OK" do
