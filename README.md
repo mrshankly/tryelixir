@@ -1,24 +1,24 @@
 # Try Elixir
 
-[![Build Status](https://travis-ci.org/tryelixir/tryelixir.png?branch=master)](https://travis-ci.org/tryelixir/tryelixir)
+![CI](https://github.com/mrshankly/tryelixir/workflows/CI/badge.svg)
 
-This is meant to be an introduction to Elixir, not a normal Elixir REPL.
-Data is deleted after 5 minutes of idle and many Elixir modules are restricted for security
-reasons. Try Elixir concept and design is inspired by [Try Haskell](http://tryhaskell.org/) and
-[Try Clojure](http://tryclj.com/). It's written in JavaScript and Elixir with [dynamo](https://github.com/elixir-lang/dynamo)
-and Chris Done's [jquery-console](https://github.com/chrisdone/jquery-console).
+Try Elixir is an online sandboxed REPL that allows you to experiment with
+the [Elixir] programming language without you having to install it locally.
 
-## How to run
+### Acknowledgements
 
-    MIX_ENV=prod mix do deps.get, server
+The concept and design is inspired by [Try Haskell] and [Try Clojure].
 
-Disclamer: Modules and functions are white-listed, but beware, random code might be able to run on your machine,
-be careful.
+[Elixir]: https://elixir-lang.org/
+[Try Haskell]: https://tryhaskell.org/
+[Try Clojure]: https://github.com/Raynes/tryclojure
 
 ## Translations
 
-If you wish to translate Try Elixir, please follow the [Translation Guide](https://github.com/tryelixir/tryelixir/blob/master/TRANSLATION.md).
+If you wish to translate Try Elixir, please follow the
+[Translation Guide](TRANSLATION.md).
 
 ## License
 
-* Tryelixir source code is released under the MIT License, see [LICENSE](https://github.com/tryelixir/tryelixir/blob/master/LICENSE) for more details.
+Try Elixir is distributed under the terms of the MIT license.
+See [LICENSE.md](LICENSE.md) for details.
