@@ -37,7 +37,7 @@
       }
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    <script type="text/javascript" src="/static/js/jquery.console.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.console.min.js"></script>
     <script type="text/javascript" src="/static/js/tryelixir.js"></script>
   </body>
 </html>
