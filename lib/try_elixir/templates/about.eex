@@ -4,26 +4,20 @@
     <meta charset="utf-8">
     <title>Try Elixir</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="static/css/style.css">
-    <link rel="stylesheet" type="text/css" href="static/css/syntax.css">
-    <link rel="shortcut icon" href="/static/drop.png">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/syntax.css">
   </head>
-
   <body>
     <div class="container-narrow">
-
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
           <li><a href="/">Home</a></li>
           <li class="active"><a href="/about">About</a></li>
           <li><a href="https://github.com/tryelixir/tryelixir.org" target="_blank">Source</a></li>
         </ul>
-        <img class="pull-left" src="static/drop.png" width="48" height="48">
         <h1>Try Elixir</h1>
       </div>
-
       <hr>
-
         <p>
           This site is an introduction to Elixir, not a normal Elixir REPL. Data is deleted after 5 minutes of
           idle and many Elixir modules are restricted for security reasons.
@@ -34,14 +28,8 @@
           <a href="https://github.com/elixir-lang/dynamo">dynamo</a> and Chris Done's
           <a href="https://github.com/chrisdone/jquery-console">jquery-console</a>.
         </p>
-
       <hr>
-
       <p class="text-center">Copyright © 2013 João Marques and Gonçalo Cabrita</p>
     </div>
-
-    <script type="text/javascript" src="/static/js/jquery-console/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript" src="/static/js/jquery-console/jquery.console.js"></script>
-    <script type="text/javascript" src="/static/js/tryelixir.js"></script>
   </body>
 </html>

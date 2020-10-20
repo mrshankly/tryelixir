@@ -4,11 +4,9 @@
     <meta charset="utf-8">
     <title>Try Elixir</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="static/css/style.css">
-    <link rel="stylesheet" type="text/css" href="static/css/syntax.css">
-    <link rel="shortcut icon" href="/static/drop.png">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/syntax.css">
   </head>
-
   <body>
     <div class="container-narrow">
       <div class="masthead">
@@ -17,26 +15,19 @@
           <li><a href="/about">About</a></li>
           <li><a href="https://github.com/tryelixir/tryelixir.org" target="_blank">Source</a></li>
         </ul>
-        <img class="pull-left" src="static/drop.png" width="48" height="48">
         <h1>Try Elixir</h1>
       </div>
-
       <hr>
-
       <div id="nocookies"></div>
       <noscript>
         <p class="text-center">Please enable javascript or upgrade your browser.</p>
       </noscript>
-
       <div id="version" data-version=<%= System.version() %>></div>
       <div id="console"></div>
       <div id="tutorial"></div>
-
       <hr>
-
       <p class="text-center">Copyright © 2013 João Marques and Gonçalo Cabrita</p>
     </div>
-
     <script type="text/javascript">
       document.cookie = "test=testcookie";
       if (document.cookie.indexOf("test=testcookie") != -1) {
@@ -45,9 +36,8 @@
         document.getElementById("nocookies").innerHTML = '<p class="text-center">Try Elixir requires cookies to work properly.</p>';
       }
     </script>
-
-    <script type="text/javascript" src="/static/js/jquery-console/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript" src="/static/js/jquery-console/jquery.console.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.console.js"></script>
     <script type="text/javascript" src="/static/js/tryelixir.js"></script>
   </body>
 </html>
