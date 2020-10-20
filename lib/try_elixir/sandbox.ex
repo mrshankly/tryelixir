@@ -6,8 +6,7 @@ defmodule TryElixir.Sandbox do
 
   alias TryElixir.Sandbox.Checker
 
-  @eval_timeout 3_000
-  @init_timeout 60_000
+  @eval_timeout 5_000
   @idle_timeout 300_000
 
   @spec start :: {:ok, pid} | {:error, any}
@@ -22,7 +21,13 @@ defmodule TryElixir.Sandbox do
 
   @spec eval(pid, String.t()) :: any
   def eval(pid, code) do
-    GenServer.call(pid, {:eval, code}, @eval_timeout)
+    try do
+      GenServer.call(pid, {:eval, code}, @eval_timeout)
+    catch
+      :exit, {:timeout, _} ->
+        Process.exit(pid, :kill)
+        :timeout
+    end
   end
 
   @impl GenServer
@@ -30,13 +35,13 @@ defmodule TryElixir.Sandbox do
     env = :elixir.env_for_eval(file: "iex", line: 1, delegate_locals_to: nil)
     state = %{binding: [], cache: '', counter: 1, env: env}
 
-    Logger.debug("Sandbox process start")
-    {:ok, state, @init_timeout}
+    Logger.info("sandbox: process start")
+    {:ok, state, @idle_timeout}
   end
 
   @impl GenServer
   def handle_call({:eval, input}, _from, state) do
-    Logger.debug("Sandbox eval input: #{inspect(input)}")
+    Logger.debug("sandbox: eval input: #{inspect(input)}")
 
     {new_state, result} =
       try do
@@ -45,6 +50,10 @@ defmodule TryElixir.Sandbox do
         eval(quoted, code, state)
       rescue
         exception ->
+          if exception.__struct__ == TryElixir.SandboxError do
+            Logger.warn("sandbox: forbidden code: #{inspect(input)}")
+          end
+
           new_state = %{state | cache: '', counter: state.counter + 1}
           {new_state, {:error, format_exception(exception)}}
       catch
@@ -55,13 +64,13 @@ defmodule TryElixir.Sandbox do
 
     reply = {result, new_state.counter}
 
-    Logger.debug("Sandbox eval reply: #{inspect(reply)}")
+    Logger.debug("sandbox: eval reply: #{inspect(reply)}")
     {:reply, reply, new_state, @idle_timeout}
   end
 
   @impl GenServer
   def handle_info(:timeout, state) do
-    Logger.debug("Sandbox process timeout")
+    Logger.info("sandbox: idle timeout")
     {:stop, :normal, state}
   end
 

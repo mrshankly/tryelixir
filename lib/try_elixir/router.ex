@@ -7,13 +7,13 @@ defmodule TryElixir.Router do
 
   require Logger
 
-  @cookie_key "_tryelixir_session"
+  @sandbox_key "_tryelixir_sandbox"
 
   plug(Plug.Static, at: "/static", from: :try_elixir)
 
   plug(Plug.Session,
     store: :cookie,
-    key: @cookie_key,
+    key: @sandbox_key,
     secret_key_base: Application.fetch_env!(:try_elixir, :secret_key_base),
     encryption_salt: Application.fetch_env!(:try_elixir, :encryption_salt),
     signing_salt: Application.fetch_env!(:try_elixir, :signing_salt)
@@ -27,7 +27,7 @@ defmodule TryElixir.Router do
   get "/" do
     conn
     |> fetch_session()
-    |> put_session(@cookie_key, nil)
+    |> put_session(@sandbox_key, nil)
     |> send_resp(200, TryElixir.Template.index())
   end
 
@@ -41,18 +41,22 @@ defmodule TryElixir.Router do
 
   post "/api/eval" do
     conn = fetch_session(conn)
-    pid = get_session(conn, @cookie_key)
+    pid = get_session(conn, @sandbox_key)
 
     {conn, pid} =
       if not is_pid(pid) or not Process.alive?(pid) do
         {:ok, pid} = TryElixir.Sandbox.start()
-        {put_session(conn, @cookie_key, pid), pid}
+        {put_session(conn, @sandbox_key, pid), pid}
       else
         {conn, pid}
       end
 
     code = Map.fetch!(conn.params, "code")
     response = TryElixir.Sandbox.eval(pid, code)
+
+    if response == :timeout do
+      Logger.warn("router: eval call to #{inspect(pid)} timed out: #{inspect(code)}")
+    end
 
     send_resp(conn, 200, format_response(response))
   end
@@ -66,27 +70,27 @@ defmodule TryElixir.Router do
     send_resp(conn, conn.status, "Something went wrong")
   end
 
-  defp format_response({:incomplete, line}) do
-    Jason.encode!(%{prompt: "...(#{line})> "})
-  end
-
   defp format_response({{:ok, term}, line}) do
-    response = %{
-      type: "ok",
-      result: "#{inspect(term)}",
-      prompt: "iex(#{line})> "
-    }
-
+    response = %{type: "ok", result: "#{inspect(term)}", prompt: "iex(#{line})> "}
     Jason.encode!(response, escape: :javascript_safe)
   end
 
   defp format_response({{:error, error}, line}) do
+    response = %{type: "error", result: "#{error}", prompt: "iex(#{line})> "}
+    Jason.encode!(response, escape: :javascript_safe)
+  end
+
+  defp format_response({:incomplete, line}) do
+    Jason.encode!(%{prompt: "...(#{line})> "})
+  end
+
+  defp format_response(:timeout) do
     response = %{
-      type: "ok",
-      result: "#{error}",
-      prompt: "iex(#{line})> "
+      type: "error",
+      result: "timeout: code evaluation took too long",
+      prompt: "iex(1)> "
     }
 
-    Jason.encode!(response, escape: :javascript_safe)
+    Jason.encode!(response)
   end
 end
