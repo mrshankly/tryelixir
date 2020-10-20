@@ -96,8 +96,8 @@ function makeCodeClickable() {
 }
 
 function animate(page) {
-  $("#tutorial").fadeOut("fast", function () {
-    $(this).load(page, function () {
+  $("#tutorial").fadeOut("fast", () => {
+    $(this).load(page, () => {
       makeCodeClickable();
       $(this).fadeIn("fast");
     });
@@ -190,7 +190,7 @@ $(document).ready(() => {
     promptHistory: true,
     welcomeMessage: "Interactive Elixir (" + version.dataset.version + ")"
   });
-  $("#tutorial").load("static/tutorial/" + guideDirectory + "intro.html", function () {
+  $("#tutorial").load("static/tutorial/" + guideDirectory + "intro.html", () => {
     makeCodeClickable();
   });
 });
