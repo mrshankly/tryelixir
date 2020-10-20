@@ -28,15 +28,20 @@ defmodule TryElixir.Router do
     conn
     |> fetch_session()
     |> put_session(@sandbox_key, nil)
+    |> put_resp_content_type("text/html")
     |> send_resp(200, TryElixir.Template.index())
   end
 
   get "/about" do
-    send_resp(conn, 200, TryElixir.Template.about())
+    conn
+    |> put_resp_content_type("text/html")
+    |> send_resp(200, TryElixir.Template.about())
   end
 
   get "/api/version" do
-    send_resp(conn, 200, System.version())
+    conn
+    |> put_resp_content_type("text/plain")
+    |> send_resp(200, System.version())
   end
 
   post "/api/eval" do
@@ -58,16 +63,23 @@ defmodule TryElixir.Router do
       Logger.warn("router: eval call to #{inspect(pid)} timed out: #{inspect(code)}")
     end
 
-    send_resp(conn, 200, format_response(response))
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(200, format_response(response))
   end
 
   match _ do
-    send_resp(conn, 404, "Not Found")
+    conn
+    |> put_resp_content_type("text/plain")
+    |> send_resp(404, "Not Found")
   end
 
   def handle_errors(conn, %{kind: kind, reason: reason}) do
     Logger.error("Router error(#{kind}): #{reason}")
-    send_resp(conn, conn.status, "Something went wrong")
+
+    conn
+    |> put_resp_content_type("text/plain")
+    |> send_resp(conn.status, "Something went wrong")
   end
 
   defp format_response({{:ok, term}, line}) do
