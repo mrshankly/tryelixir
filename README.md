@@ -21,4 +21,4 @@ If you wish to translate Try Elixir, please follow the
 ## License
 
 Try Elixir is distributed under the terms of the MIT license.
-See [LICENSE.md](LICENSE.md) for details.
+See [LICENSE](LICENSE) for details.
