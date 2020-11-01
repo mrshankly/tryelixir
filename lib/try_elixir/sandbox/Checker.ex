@@ -45,11 +45,53 @@ defmodule TryElixir.Sandbox.Checker do
     :def,
     :defp,
     :__aliases__,
-    :__block__
+    :__block__,
+    :&
   ]
 
   @allowed_named_functions %{
+    :math => :all,
+    Access => :all,
+    Atom => :all,
+    Base => :all,
+    Bitwise => :all,
+    Calendar => :all,
+    Calendar.ISO => :all,
+    Date => :all,
+    DateTime => :all,
     Enum => :all,
+    Float => :all,
+    Function => [:identity, :info],
+    Integer => :all,
+    Keyword => :all,
+    List => :all,
+    Map => :all,
+    MapSet => :all,
+    NaiveDateTime => :all,
+    OptionParser => :all,
+    Range => [:disjoint?],
+    Regex => :all,
+    Stream => :all,
+    String => :all,
+    System => [:endianness, :otp_release, :version],
+    Time => :all,
+    Tuple => :all,
+    URI => [
+      :char_reserved?,
+      :char_unescaped?,
+      :char_unreserved?,
+      :decode,
+      :decode_query,
+      :decode_www_form,
+      :encode,
+      :encode_query,
+      :encode_www_form,
+      :merge,
+      :parse,
+      :query_decoder,
+      :to_string
+    ],
+    Version => :all,
     Kernel => @allowed_local_functions
   }
 
