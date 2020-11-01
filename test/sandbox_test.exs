@@ -49,4 +49,18 @@ defmodule SandboxTest do
     {{:error, result}, _} = eval("<<128 :: unit(n)>>", state)
     assert result =~ @sandbox_error
   end
+
+  test "capture" do
+    {{:ok, result}, _} = eval("&System.version/0")
+    assert result == &System.version/0
+
+    {{:error, result}, _} = eval("&System.pid/0")
+    assert result =~ @sandbox_error
+
+    {{:error, result}, _} = eval("&File.cd/1")
+    assert result =~ @sandbox_error
+
+    {{:error, result}, _} = eval("&File.cd(&1)")
+    assert result =~ @sandbox_error
+  end
 end
