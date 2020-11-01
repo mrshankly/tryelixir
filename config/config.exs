@@ -6,6 +6,7 @@ config :logger, :console,
   metadata: [:pid]
 
 config :try_elixir,
+  port: 8888,
   secret_key_base:
     Base.decode64!(
       "aOHnVcZ1QA7jI6ULKgIHYG3aU4si38EM/R4wIfT+CyRl7E63g9s3D3ntS5cXE9q5LEve8ewVuPEr8tv40w7oMQ=="

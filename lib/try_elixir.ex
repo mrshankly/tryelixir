@@ -4,8 +4,10 @@ defmodule TryElixir do
   use Application
 
   def start(_type, _args) do
+    port = Application.fetch_env!(:try_elixir, :port)
+
     children = [
-      {Plug.Cowboy, scheme: :http, plug: TryElixir.Router, options: [port: 8080]}
+      {Plug.Cowboy, scheme: :http, plug: TryElixir.Router, options: [port: port]}
     ]
 
     opts = [strategy: :one_for_one, name: TryElixir.Supervisor]

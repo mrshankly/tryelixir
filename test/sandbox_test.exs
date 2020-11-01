@@ -52,7 +52,7 @@ defmodule SandboxTest do
 
   test "capture" do
     {{:ok, result}, _} = eval("&System.version/0")
-    assert result == &System.version/0
+    assert result == (&System.version/0)
 
     {{:error, result}, _} = eval("&System.pid/0")
     assert result =~ @sandbox_error

@@ -29,6 +29,7 @@ import Config
 config :logger, level: :info
 
 config :try_elixir,
+  port: 8080,
   secret_key_base: ProdConfig.urandom(64),
   encryption_salt: ProdConfig.urandom(32),
   signing_salt: ProdConfig.urandom(32)
