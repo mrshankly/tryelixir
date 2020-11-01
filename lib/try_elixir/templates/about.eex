@@ -13,23 +13,22 @@
         <ul class="nav nav-pills pull-right">
           <li><a href="/">Home</a></li>
           <li class="active"><a href="/about">About</a></li>
-          <li><a href="https://github.com/tryelixir/tryelixir.org" target="_blank">Source</a></li>
+          <li><a href="https://github.com/mrshankly/tryelixir" target="_blank">Source</a></li>
         </ul>
         <h1>Try Elixir</h1>
       </div>
       <hr>
         <p>
-          This site is an introduction to Elixir, not a normal Elixir REPL. Data is deleted after 5 minutes of
-          idle and many Elixir modules are restricted for security reasons.
+          Try Elixir is an online sandboxed REPL that allows you to experiment
+          with the <a href="https://elixir-lang.org/">Elixir</a> programming
+          language without you having to install it locally.
         </p>
         <p>
-          Try Elixir concept and design is inspired by <a href="http://tryhaskell.org/">Try Haskell</a> and
-          <a href="http://tryclj.com/">Try Clojure</a>. It's written in javascript and elixir with
-          <a href="https://github.com/elixir-lang/dynamo">dynamo</a> and Chris Done's
-          <a href="https://github.com/chrisdone/jquery-console">jquery-console</a>.
+          The concept and design is inspired by <a href="https://tryhaskell.org/">Try Haskell</a>
+          and <a href="https://github.com/Raynes/tryclojure">Try Clojure</a>.
         </p>
       <hr>
-      <p class="text-center">Copyright © 2013 João Marques and Gonçalo Cabrita</p>
+      <p class="text-center">Copyright © 2020 João Marques and Gonçalo Cabrita</p>
     </div>
   </body>
 </html>

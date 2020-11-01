@@ -13,7 +13,7 @@
         <ul class="nav nav-pills pull-right">
           <li class="active"><a href="/">Home</a></li>
           <li><a href="/about">About</a></li>
-          <li><a href="https://github.com/tryelixir/tryelixir.org" target="_blank">Source</a></li>
+          <li><a href="https://github.com/mrshankly/tryelixir" target="_blank">Source</a></li>
         </ul>
         <h1>Try Elixir</h1>
       </div>
@@ -26,7 +26,6 @@
       <div id="console"></div>
       <div id="tutorial"></div>
       <hr>
-      <p class="text-center">Copyright © 2013 João Marques and Gonçalo Cabrita</p>
     </div>
     <script type="text/javascript">
       document.cookie = "test=testcookie";
