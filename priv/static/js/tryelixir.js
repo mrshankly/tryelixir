@@ -75,18 +75,18 @@ function decode(line) {
 }
 
 function makeCodeClickable() {
-  $('pre').each(() => {
+  $('pre').each(function() {
     $(this).attr('title', 'Click me to insert in the console.');
-    $(this).click((e) => {
+    $(this).click(function(e) {
       if (e.button == 0) {
         controller.promptText($(this).text());
         controller.inner.click();
       }
     });
   });
-  $('code').each(() => {
+  $('code').each(function() {
     $(this).attr('title', "Click me to insert '" + $(this).text() + "' in the console.");
-    $(this).click((e) => {
+    $(this).click(function(e) {
       if (e.button == 0) {
         controller.promptText($(this).text());
         controller.inner.click();
@@ -96,8 +96,8 @@ function makeCodeClickable() {
 }
 
 function animate(page) {
-  $("#tutorial").fadeOut("fast", () => {
-    $(this).load(page, () => {
+  $("#tutorial").fadeOut("fast", function() {
+    $(this).load(page, function() {
       makeCodeClickable();
       $(this).fadeIn("fast");
     });
@@ -105,7 +105,7 @@ function animate(page) {
 }
 
 function goToPage(number) {
-  if (number < tutorialPages.length && number >= 0) {
+  if (number >= 0 && number < tutorialPages.length) {
     currentPage = number;
     animate("static/tutorial/" + guideDirectory + tutorialPages[number].guide);
   }
@@ -118,35 +118,35 @@ $(document).ready(() => {
     commandValidate: (input) => (input.length < 1000),
     commandHandle: (line, report) => {
       switch (line) {
-        case ":next":
+        case "!next":
           if (tutorialActive)
             goToPage(currentPage + 1);
           report("");
           return;
-        case ":prev":
+        case "!prev":
           if (tutorialActive)
             goToPage(currentPage - 1);
           report("");
           return;
-        case ":restart":
+        case "!restart":
           if (tutorialActive)
             goToPage(1);
           report("");
           return;
-        case ":clear":
+        case "!clear":
           controller.reset();
           return;
-        case ":start":
+        case "!start":
           tutorialActive = true;
           goToPage(1);
           report("");
           return;
-        case ":steps":
+        case "!steps":
           animate("static/tutorial/" + guideDirectory + "steps.html");
           report("");
           return;
         default:
-          m = line.match(/^:step(\d+)/);
+          m = line.match(/^!step(\d+)/);
           if (m) {
             page = Number(m[1]);
             if (page >= 1 && page <= 11) {
