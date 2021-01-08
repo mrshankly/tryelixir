@@ -18,7 +18,6 @@
         <h1>Try Elixir</h1>
       </div>
       <hr>
-      <div id="nocookies"></div>
       <noscript>
         <p class="text-center">Please enable javascript or upgrade your browser.</p>
       </noscript>
@@ -27,14 +26,6 @@
       <div id="tutorial"></div>
       <hr>
     </div>
-    <script type="text/javascript">
-      document.cookie = "test=testcookie";
-      if (document.cookie.indexOf("test=testcookie") != -1) {
-        document.cookie = "test=testcookie;expires=Thu, 01 Jan 1970 00:00:00 GMT;";
-      } else {
-        document.getElementById("nocookies").innerHTML = '<p class="text-center">Try Elixir requires cookies to work properly.</p>';
-      }
-    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script type="text/javascript" src="/static/js/jquery.console.min.js"></script>
     <script type="text/javascript" src="/static/js/tryelixir.js"></script>

@@ -14,9 +14,11 @@ defmodule TryElixir.Router do
   plug(Plug.Session,
     store: :cookie,
     key: @sandbox_key,
+    secure: true,
     secret_key_base: Application.fetch_env!(:try_elixir, :secret_key_base),
     encryption_salt: Application.fetch_env!(:try_elixir, :encryption_salt),
-    signing_salt: Application.fetch_env!(:try_elixir, :signing_salt)
+    signing_salt: Application.fetch_env!(:try_elixir, :signing_salt),
+    same_site: "Lax"
   )
 
   plug(Plug.Parsers, parsers: [:urlencoded], pass: ["application/*"], validate_utf8: true)
