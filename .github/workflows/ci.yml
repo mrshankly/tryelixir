@@ -12,8 +12,8 @@ jobs:
         include:
           - otp: 21.3
             elixir: 1.10.4
-          - otp: 23.1
-            elixir: 1.11.1
+          - otp: 23.2.1
+            elixir: 1.11.3
     runs-on: ubuntu-latest
 
     steps:
