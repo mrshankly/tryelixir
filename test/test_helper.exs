@@ -7,7 +7,7 @@ defmodule TryElixir.Case do
   end
 
   def eval(code, state) do
-    {:reply, {result, _}, new_state, _} =
+    {:reply, {result, _, _}, new_state, _} =
       TryElixir.Sandbox.handle_call({:eval, code}, self(), state)
 
     {result, new_state}

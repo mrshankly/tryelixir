@@ -42,7 +42,7 @@ defmodule RouterTest do
     assert conn.status == 200
 
     body = Jason.decode!(conn.resp_body)
-    assert Map.fetch!(body, "type") == "ok"
+    refute Map.has_key?(body, "error")
     assert Map.fetch!(body, "result") == "42"
     assert Map.fetch!(body, "prompt") == "iex(2)> "
   end
@@ -52,7 +52,7 @@ defmodule RouterTest do
     assert conn.status == 200
 
     body = Jason.decode!(conn.resp_body)
-    refute Map.has_key?(body, "type")
+    refute Map.has_key?(body, "error")
     refute Map.has_key?(body, "result")
     assert Map.fetch!(body, "prompt") == "...(1)> "
 
@@ -60,7 +60,7 @@ defmodule RouterTest do
     assert conn.status == 200
 
     body = Jason.decode!(conn.resp_body)
-    assert Map.fetch!(body, "type") == "ok"
+    refute Map.has_key?(body, "error")
     assert Map.fetch!(body, "result") == "4"
     assert Map.fetch!(body, "prompt") == "iex(2)> "
   end

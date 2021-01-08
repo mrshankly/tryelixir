@@ -82,24 +82,33 @@ defmodule TryElixir.Router do
     |> send_resp(conn.status, "Something went wrong")
   end
 
-  defp format_response({{:ok, term}, line}) do
-    response = %{type: "ok", result: "#{inspect(term)}", prompt: "iex(#{line})> "}
+  defp format_response({{:ok, term}, warnings, line}) do
+    response = %{
+      result: "#{inspect(term)}",
+      prompt: "iex(#{line})> ",
+      warnings: Enum.map(warnings, &elem(&1, 2))
+    }
+
     Jason.encode!(response, escape: :javascript_safe)
   end
 
-  defp format_response({{:error, error}, line}) do
-    response = %{type: "error", result: "#{error}", prompt: "iex(#{line})> "}
+  defp format_response({{:error, error}, warnings, line}) do
+    response = %{
+      error: "#{error}",
+      prompt: "iex(#{line})> ",
+      warnings: Enum.map(warnings, &elem(&1, 2))
+    }
+
     Jason.encode!(response, escape: :javascript_safe)
   end
 
-  defp format_response({:incomplete, line}) do
+  defp format_response({:incomplete, _warnings, line}) do
     Jason.encode!(%{prompt: "...(#{line})> "})
   end
 
   defp format_response(:timeout) do
     response = %{
-      type: "error",
-      result: "timeout: code evaluation took too long",
+      error: "timeout: code evaluation took too long",
       prompt: "iex(1)> "
     }
 

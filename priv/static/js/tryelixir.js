@@ -75,18 +75,18 @@ function decode(line) {
 }
 
 function makeCodeClickable() {
-  $('pre').each(function() {
+  $('pre').each(function () {
     $(this).attr('title', 'Click me to insert in the console.');
-    $(this).click(function(e) {
+    $(this).click(function (e) {
       if (e.button == 0) {
         controller.promptText($(this).text());
         controller.inner.click();
       }
     });
   });
-  $('code').each(function() {
+  $('code').each(function () {
     $(this).attr('title', "Click me to insert '" + $(this).text() + "' in the console.");
-    $(this).click(function(e) {
+    $(this).click(function (e) {
       if (e.button == 0) {
         controller.promptText($(this).text());
         controller.inner.click();
@@ -96,8 +96,8 @@ function makeCodeClickable() {
 }
 
 function animate(page) {
-  $("#tutorial").fadeOut("fast", function() {
-    $(this).load(page, function() {
+  $("#tutorial").fadeOut("fast", function () {
+    $(this).load(page, function () {
       makeCodeClickable();
       $(this).fadeIn("fast");
     });
@@ -162,19 +162,26 @@ $(document).ready(() => {
             "data": { "code": line },
             "dataType": "json",
             "success": (obj) => {
+              messages = []
               controller.promptLabel = obj.prompt;
-              // If there's no result, just print prompt and keep adding new input
-              if (obj.result == undefined) {
-                report();
-              } else {
-                if (obj.type == "ok") {
-                  report([{ msg: obj.result, className: "jquery-console-message-success" }]);
-                } else {
-                  report([{ msg: obj.result, className: "jquery-console-message-error" }]);
-                }
-                if (tutorialActive && tutorialPages[currentPage].trigger(line, obj.result)) {
-                  goToPage(currentPage + 1);
-                }
+
+              // Print warnings first, if any.
+              if (Array.isArray(obj.warnings)) {
+                messages = obj.warnings.map(warning => (
+                  { msg: "warning: ".concat(warning), className: "jquery-console-message-warning" }
+                ));
+              }
+              // Print result, error, or nothing when the user input is incomplete.
+              if (obj.result != undefined) {
+                messages.push({ msg: obj.result, className: "jquery-console-message-success" });
+              } else if (obj.error != undefined) {
+                messages.push({ msg: obj.error, className: "jquery-console-message-error" });
+              }
+              report(messages);
+
+              // Update current tutorial page.
+              if (tutorialActive && tutorialPages[currentPage].trigger(line, obj.result)) {
+                goToPage(currentPage + 1);
               }
             },
             "error": (_jqXHR, status, _error) => {

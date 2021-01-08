@@ -5,6 +5,7 @@ defmodule TryElixir.Sandbox do
   require Logger
 
   alias TryElixir.Sandbox.Checker
+  alias TryElixir.Sandbox.WarningAgent
 
   @eval_timeout 5_000
   @idle_timeout 300_000
@@ -32,8 +33,13 @@ defmodule TryElixir.Sandbox do
 
   @impl GenServer
   def init([]) do
+    # Register a new warning agent as the :elixir_compiler_pid in the process dictionary.
+    # This allows us to receive compiler warnings when calling :elixir.eval_forms/3.
+    warning_agent = WarningAgent.start_link()
+    :erlang.put(:elixir_compiler_pid, warning_agent)
+
     env = :elixir.env_for_eval(file: "iex", line: 1, delegate_locals_to: nil)
-    state = %{binding: [], cache: '', counter: 1, env: env}
+    state = %{binding: [], cache: '', counter: 1, env: env, warning_agent: warning_agent}
 
     Logger.info("sandbox: process start")
     {:ok, state, @idle_timeout}
@@ -42,6 +48,9 @@ defmodule TryElixir.Sandbox do
   @impl GenServer
   def handle_call({:eval, input}, _from, state) do
     Logger.debug("sandbox: eval input: #{inspect(input)}")
+
+    # Flush warnings that were left behind from a previous eval.
+    WarningAgent.flush(state.warning_agent)
 
     {new_state, result} =
       try do
@@ -62,7 +71,8 @@ defmodule TryElixir.Sandbox do
           {new_state, {:error, format_error(kind, reason)}}
       end
 
-    reply = {result, new_state.counter}
+    warnings = WarningAgent.flush(state.warning_agent)
+    reply = {result, warnings, new_state.counter}
 
     Logger.debug("sandbox: eval reply: #{inspect(reply)}")
     {:reply, reply, new_state, @idle_timeout}
@@ -83,7 +93,8 @@ defmodule TryElixir.Sandbox do
       binding: binding,
       cache: '',
       counter: state.counter + 1,
-      env: env
+      env: env,
+      warning_agent: state.warning_agent
     }
 
     {new_state, {:ok, result}}

@@ -126,6 +126,11 @@ pre {
  font-family: monospace;
  padding: 0.1em;
 }
+#console div.jquery-console-message-warning {
+  color: #b56e00;
+  font-family: monospace;
+  padding: 0.1em;
+}
 #console div.jquery-console-welcome {
   color: #555;
   font-family: monospace;
