@@ -21,7 +21,7 @@ defmodule TryElixir.Router do
     same_site: "Lax"
   )
 
-  plug(Plug.Parsers, parsers: [:urlencoded], pass: ["application/*"], validate_utf8: true)
+  plug(Plug.Parsers, parsers: [:urlencoded], pass: ["application/json"], validate_utf8: true)
 
   plug(:match)
   plug(:dispatch)
@@ -76,8 +76,14 @@ defmodule TryElixir.Router do
     |> send_resp(404, "Not Found")
   end
 
+  def handle_errors(conn, %{kind: _kind, reason: %Plug.Parsers.UnsupportedMediaTypeError{}}) do
+    conn
+    |> put_resp_content_type("text/plain")
+    |> send_resp(conn.status, "Unsupported Media Type")
+  end
+
   def handle_errors(conn, %{kind: kind, reason: reason}) do
-    Logger.error("Router error(#{kind}): #{reason}")
+    Logger.error("Router error(#{inspect(kind)}): #{inspect(reason)}")
 
     conn
     |> put_resp_content_type("text/plain")
