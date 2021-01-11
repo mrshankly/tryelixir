@@ -63,4 +63,12 @@ defmodule SandboxTest do
     {{:error, result}, _} = eval("&File.cd(&1)")
     assert result =~ @sandbox_error
   end
+
+  test "arity" do
+    {{:ok, result}, _} = eval("IO.puts(\"Hello, world!\")")
+    assert result == :ok
+
+    {{:error, result}, _} = eval("IO.puts(:stderr, \"Hello, world!\")")
+    assert result =~ @sandbox_error
+  end
 end
