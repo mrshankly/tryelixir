@@ -90,7 +90,7 @@ defmodule TryElixir.Router do
     |> send_resp(conn.status, "Something went wrong")
   end
 
-  defp format_response({{:ok, term}, warnings, line}) do
+  defp format_response({{:ok, term}, _output, warnings, line}) do
     response = %{
       result: "#{inspect(term)}",
       prompt: "iex(#{line})> ",
@@ -100,7 +100,7 @@ defmodule TryElixir.Router do
     Jason.encode!(response, escape: :javascript_safe)
   end
 
-  defp format_response({{:error, error}, warnings, line}) do
+  defp format_response({{:error, error}, _output, warnings, line}) do
     response = %{
       error: "#{error}",
       prompt: "iex(#{line})> ",
@@ -110,7 +110,7 @@ defmodule TryElixir.Router do
     Jason.encode!(response, escape: :javascript_safe)
   end
 
-  defp format_response({:incomplete, _warnings, line}) do
+  defp format_response({:incomplete, _output, _warnings, line}) do
     Jason.encode!(%{prompt: "...(#{line})> "})
   end
 

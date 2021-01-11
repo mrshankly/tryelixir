@@ -52,7 +52,7 @@ defmodule TryElixir.Sandbox do
     # Flush warnings that were left behind from a previous eval.
     WarningAgent.flush(state.warning_agent)
 
-    {new_state, result} =
+    {new_state, result, output} =
       try do
         code = state.cache ++ String.to_charlist(input)
         quoted = Code.string_to_quoted(code, file: "iex", line: state.counter)
@@ -64,15 +64,15 @@ defmodule TryElixir.Sandbox do
           end
 
           new_state = %{state | cache: '', counter: state.counter + 1}
-          {new_state, {:error, format_exception(exception)}}
+          {new_state, {:error, format_exception(exception)}, ""}
       catch
         kind, reason ->
           new_state = %{state | cache: '', counter: state.counter + 1}
-          {new_state, {:error, format_error(kind, reason)}}
+          {new_state, {:error, format_error(kind, reason)}, ""}
       end
 
     warnings = WarningAgent.flush(state.warning_agent)
-    reply = {result, warnings, new_state.counter}
+    reply = {result, output, warnings, new_state.counter}
 
     Logger.debug("sandbox: eval reply: #{inspect(reply)}")
     {:reply, reply, new_state, @idle_timeout}
@@ -86,8 +86,11 @@ defmodule TryElixir.Sandbox do
 
   # Well-formed input, evaluate if safe.
   defp eval({:ok, forms}, _code, state) do
-    {result, binding, env} =
+    safe_eval = fn ->
       Checker.safe!(forms, state.env) |> :elixir.eval_forms(state.binding, state.env)
+    end
+
+    {{result, binding, env}, output} = capture_output(safe_eval)
 
     new_state = %{
       binding: binding,
@@ -97,12 +100,12 @@ defmodule TryElixir.Sandbox do
       warning_agent: state.warning_agent
     }
 
-    {new_state, {:ok, result}}
+    {new_state, {:ok, result}, output}
   end
 
   # Input is not complete, update the cache and wait for more input.
   defp eval({:error, {_line, _error, ""}}, code, state) do
-    {%{state | cache: code ++ '\n'}, :incomplete}
+    {%{state | cache: code ++ '\n'}, :incomplete, ""}
   end
 
   # Malformed input.
@@ -116,5 +119,25 @@ defmodule TryElixir.Sandbox do
 
   defp format_error(kind, reason) do
     "** (#{kind}) #{inspect(reason)}"
+  end
+
+  defp capture_output(fun) when is_function(fun, 0) do
+    current_gl = Process.group_leader()
+    {:ok, capture_gl} = StringIO.open("", capture_prompt: false, encoding: :unicode)
+
+    try do
+      Process.group_leader(self(), capture_gl)
+      fun.()
+    catch
+      kind, reason ->
+        _ = StringIO.close(capture_gl)
+        :erlang.raise(kind, reason, __STACKTRACE__)
+    else
+      result ->
+        {:ok, {_input, output}} = StringIO.close(capture_gl)
+        {result, output}
+    after
+      Process.group_leader(self(), current_gl)
+    end
   end
 end
