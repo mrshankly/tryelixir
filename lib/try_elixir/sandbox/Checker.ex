@@ -151,6 +151,7 @@ defmodule TryElixir.Sandbox.Checker do
     Float => :all,
     Function => [:identity, :info],
     Integer => :all,
+    IO => [:chardata_to_string, :iodata_length, :iodata_to_binary, {:puts, 1}, {:write, 1}],
     Keyword => :all,
     List => :all,
     Map => :all,
@@ -214,6 +215,7 @@ defmodule TryElixir.Sandbox.Checker do
   # Named function call.
   defp safe!(quoted = {{:., _, [module, fun]}, _, args}, env, locals) do
     module = Macro.expand(module, env)
+    arity = length(args)
 
     functions =
       if module in env.context_modules do
@@ -222,9 +224,18 @@ defmodule TryElixir.Sandbox.Checker do
         Map.get(@allowed_named_functions, module, [])
       end
 
-    if is_list(functions) and fun not in functions do
-      raise SandboxError,
-        message: "forbidden function #{Exception.format_mfa(module, fun, length(args))}"
+    if is_list(functions) do
+      normalize = fn
+        f when is_atom(f) -> {f, arity}
+        {f, a} when is_atom(f) and is_integer(a) -> {f, a}
+      end
+
+      functions = Enum.map(functions, normalize)
+
+      if Keyword.get(functions, fun) != arity do
+        raise SandboxError,
+          message: "forbidden function #{Exception.format_mfa(module, fun, arity)}"
+      end
     end
 
     safe!(args, env, locals)
