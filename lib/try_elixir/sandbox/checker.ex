@@ -151,7 +151,7 @@ defmodule TryElixir.Sandbox.Checker do
     Float => :all,
     Function => [:identity, :info],
     Integer => :all,
-    IO => [:chardata_to_string, :iodata_length, :iodata_to_binary, {:puts, 1}, {:write, 1}],
+    IO => [:chardata_to_string, :iodata_length, :iodata_to_binary, {:puts, 1}],
     Keyword => :all,
     List => :all,
     Map => :all,

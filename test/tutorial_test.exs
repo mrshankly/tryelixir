@@ -7,6 +7,8 @@ defmodule TutorialTest do
   import TryElixir.Case
 
   test "1 - warm up" do
+    {{:ok, result}, _} = eval(~s/IO.puts("Hello, world!")/)
+    assert result == :ok
     {{:ok, result}, _} = eval("8 + 4")
     assert result == 12
   end

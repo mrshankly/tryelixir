@@ -171,6 +171,10 @@ $(document).ready(() => {
                   { msg: "warning: ".concat(warning), className: "jquery-console-message-warning" }
                 ));
               }
+              // Print output, if any.
+              if (obj.output != undefined) {
+                messages.push({ msg: obj.output, className: "jquery-console-message-value" });
+              }
               // Print result, error, or nothing when the user input is incomplete.
               if (obj.result != undefined) {
                 messages.push({ msg: obj.result, className: "jquery-console-message-success" });

@@ -64,4 +64,15 @@ defmodule RouterTest do
     assert Map.fetch!(body, "result") == "4"
     assert Map.fetch!(body, "prompt") == "iex(2)> "
   end
+
+  test "api eval with output" do
+    conn = post("/api/eval", code: ~s/IO.puts("Hello world!")/)
+    assert conn.status == 200
+
+    body = Jason.decode!(conn.resp_body)
+    refute Map.has_key?(body, "error")
+    assert Map.fetch!(body, "result") == ":ok"
+    assert Map.fetch!(body, "output") == "Hello world!\n"
+    assert Map.fetch!(body, "prompt") == "iex(2)> "
+  end
 end
