@@ -36,7 +36,7 @@ defmodule TryElixir.Sandbox do
     # Register a new warning agent as the :elixir_compiler_pid in the process dictionary.
     # This allows us to receive compiler warnings when calling :elixir.eval_forms/3.
     warning_agent = WarningAgent.start_link()
-    :erlang.put(:elixir_compiler_pid, warning_agent)
+    Process.put(:elixir_compiler_pid, warning_agent)
 
     env = :elixir.env_for_eval(file: "iex", line: 1, delegate_locals_to: nil)
     state = %{binding: [], cache: '', counter: 1, env: env, warning_agent: warning_agent}
@@ -80,6 +80,11 @@ defmodule TryElixir.Sandbox do
 
   @impl GenServer
   def handle_info(:timeout, state) do
+    Enum.each(state.env.context_modules, fn mod ->
+      :code.delete(mod)
+      :code.purge(mod)
+    end)
+
     Logger.info("sandbox: idle timeout")
     {:stop, :normal, state}
   end
@@ -114,11 +119,16 @@ defmodule TryElixir.Sandbox do
   end
 
   defp format_exception(exception) do
-    "** (#{inspect(exception.__struct__)}) #{Exception.message(exception)}"
+    "** (#{inspect(exception.__struct__)}) #{remove_namespace(Exception.message(exception))}"
   end
 
   defp format_error(kind, reason) do
-    "** (#{kind}) #{inspect(reason)}"
+    "** (#{kind}) #{remove_namespace(inspect(reason))}"
+  end
+
+  defp remove_namespace(message) do
+    pattern = "#{TryElixir.Sandbox.Modules.get_namespace()}."
+    String.replace(message, pattern, "")
   end
 
   defp capture_output(fun) when is_function(fun, 0) do

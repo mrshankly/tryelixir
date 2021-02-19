@@ -197,31 +197,48 @@ defmodule TryElixir.Sandbox.Checker do
     safe!(quoted, env, [])
   end
 
-  # Before checking if the module is safe, we need to gather all the public
-  # and private functions defined by the module. These functions are passed
-  # to safe!/3 as the `locals` parameter. Doing this allows the user to call
-  # functions defined by the module, inside that module.
+  # Before checking if the module is safe, we first need to check if the user
+  # is trying to redefined a reserved module. Also, we need to gather all the
+  # public and private functions defined by the module. These functions are
+  # passed to safe!/3 as the `locals` parameter. Doing this allows the user to
+  # call functions defined by the module, inside that module.
   @spec safe!(Macro.t(), Macro.Env.t(), [atom]) :: Macro.t()
-  defp safe!(quoted = {:defmodule, _, module = [_alias, [do: {:__block__, _, defs}]]}, env, _) do
-    safe!(module, env, module_locals(defs))
-    quoted
-  end
+  defp safe!({:defmodule, meta, [aliases, do_block]}, env, _) do
+    case check_reserved_module(aliases, env) do
+      {:reserved, module} ->
+        raise SandboxError, message: "module #{module} is reserved and cannot be redefined"
 
-  defp safe!(quoted = {:defmodule, _, module = [_alias, [do: definition]]}, env, _) do
-    safe!(module, env, module_locals([definition]))
-    quoted
+      {:free, namespaced_aliases} ->
+        module = [namespaced_aliases, do_block]
+
+        case do_block do
+          [do: {:__block__, _, definitions}] ->
+            safe!(module, env, module_locals(definitions))
+
+          [do: definition] ->
+            safe!(module, env, module_locals([definition]))
+        end
+
+        {:defmodule, meta, module}
+    end
   end
 
   # Named function call.
-  defp safe!(quoted = {{:., _, [module, fun]}, _, args}, env, locals) do
+  defp safe!(quoted = {{:., meta, [module, fun]}, info, args}, env, locals) do
+    ns_module = TryElixir.Sandbox.Modules.namespace(module) |> Macro.expand(env)
     module = Macro.expand(module, env)
     arity = length(args)
 
-    functions =
-      if module in env.context_modules do
-        :all
-      else
-        Map.get(@allowed_named_functions, module, [])
+    {functions, quoted} =
+      cond do
+        ns_module in env.context_modules ->
+          {:all, {{:., meta, [ns_module, fun]}, info, args}}
+
+        module in env.context_modules ->
+          {:all, quoted}
+
+        true ->
+          {Map.get(@allowed_named_functions, module, []), quoted}
       end
 
     if is_list(functions) do
@@ -358,5 +375,15 @@ defmodule TryElixir.Sandbox.Checker do
     end
 
     Enum.reduce(definitions, [], gather_locals)
+  end
+
+  defp check_reserved_module(aliases = {:__aliases__, _, _}, env) do
+    module = Macro.expand(aliases, env)
+
+    if Code.ensure_loaded?(module) do
+      {:reserved, module}
+    else
+      {:free, TryElixir.Sandbox.Modules.namespace(aliases)}
+    end
   end
 end
