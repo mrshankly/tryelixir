@@ -48,19 +48,19 @@ defmodule TryElixir.Sandbox do
   @impl GenServer
   def handle_call({:eval, input}, _from, state) do
     Logger.debug("sandbox: eval input: #{inspect(input)}")
+    code = state.cache ++ String.to_charlist(input)
 
     # Flush warnings that were left behind from a previous eval.
     WarningAgent.flush(state.warning_agent)
 
     {new_state, result, output} =
       try do
-        code = state.cache ++ String.to_charlist(input)
         quoted = Code.string_to_quoted(code, file: "iex", line: state.counter)
         eval(quoted, code, state)
       rescue
         exception ->
           if exception.__struct__ == TryElixir.SandboxError do
-            Logger.warn("sandbox: forbidden code: #{inspect(input)}")
+            Logger.warn("sandbox: forbidden code: #{inspect(code)}")
           end
 
           new_state = %{state | cache: '', counter: state.counter + 1}
