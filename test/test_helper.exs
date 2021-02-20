@@ -2,14 +2,14 @@ ExUnit.start()
 
 defmodule TryElixir.Case do
   def eval(code) do
-    {:ok, initial_state, _} = TryElixir.Sandbox.init([])
-    eval(code, initial_state)
+    {:ok, pid} = TryElixir.Sandbox.start()
+    {pid, eval(pid, code)}
   end
 
-  def eval(code, state) do
-    {:reply, {result, _output, _warnings, _line}, new_state, _} =
-      TryElixir.Sandbox.handle_call({:eval, code}, self(), state)
-
-    {result, new_state}
+  def eval(pid, code) do
+    case TryElixir.Sandbox.eval(pid, code) do
+      {result, _, _, _} -> result
+      :timeout -> :timeout
+    end
   end
 end
