@@ -20,13 +20,7 @@ defmodule TryElixir.Sandbox.Modules do
     case Process.get(@namespace_key) do
       nil ->
         pid = :erlang.term_to_binary(self())
-
-        namespace =
-          :crypto.hash(:blake2b, pid)
-          |> :binary.part(0, 32)
-          |> encode()
-          |> String.to_atom()
-
+        namespace = :crypto.hash(:sha224, pid) |> encode() |> String.to_atom()
         Process.put(@namespace_key, namespace)
         namespace
 
